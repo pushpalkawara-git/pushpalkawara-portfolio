@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Supply Chain Pro — Analytics Dashboard</title>
+<link href="https://docs.google.com/spreadsheets/d/1t8surCotYHPBL9o9sDB8Qn9zGiwsooyTXRh-CD3o0nk/edit?usp=sharing" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<style>
+:root{
+  --bg:#05070f;--bg2:#0b0e1c;--bg3:#111428;
+  --card:#131729;--card2:#1a1f38;
+  --border:#1e2440;--border2:#252c4a;
+  --text:#e8ecf8;--text2:#8892b0;--text3:#4a5580;
+  --accent:#00d4ff;--accent2:#7c3aed;
+  --green:#00ff88;--orange:#ff6b35;--pink:#ff3d8a;--yellow:#ffd60a;
+  --sidebar-w:250px;--topbar-h:60px;--filterbar-h:58px;
+  --radius:12px;--radius-sm:8px;
+  --shadow:0 4px 24px rgba(0,212,255,0.07);
+  --shadow-card:0 2px 16px rgba(0,0,0,0.35);
+  --transition:0.22s cubic-bezier(0.4,0,0.2,1);
+}
+[data-theme="light"]{
+  --bg:#eef1f8;--bg2:#e4e8f5;--bg3:#d8ddf0;
+  --card:#fff;--card2:#f5f7ff;
+  --border:#cdd3e8;--border2:#b8c0d8;
+  --text:#111828;--text2:#4a5580;--text3:#8892b0;
+  --shadow:0 4px 24px rgba(0,0,0,0.06);
+  --shadow-card:0 2px 16px rgba(0,0,0,0.07);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overflow:hidden;}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;
+  background:var(--bg2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;z-index:200;
+  transition:transform var(--transition);overflow:hidden;
+}
+.sidebar-brand{
+  padding:18px 16px 14px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:12px;flex-shrink:0;
+}
+.brand-mark{
+  width:38px;height:38px;border-radius:10px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:13px;color:#fff;
+  box-shadow:0 0 16px rgba(0,212,255,0.35);
+}
+.brand-info{min-width:0;}
+.brand-info h2{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.brand-info p{font-size:10px;color:var(--text3);margin-top:1px;}
+.nav-section-label{
+  padding:16px 16px 6px;
+  font-size:9px;font-weight:700;letter-spacing:1.8px;color:var(--text3);text-transform:uppercase;
+}
+.nav-item{
+  margin:1px 10px;padding:9px 12px;border-radius:9px;
+  cursor:pointer;display:flex;align-items:center;gap:10px;
+  transition:all var(--transition);position:relative;border:1px solid transparent;
+}
+.nav-item:hover{background:var(--bg3);border-color:var(--border);}
+.nav-item.active{
+  background:linear-gradient(135deg,rgba(0,212,255,0.13),rgba(124,58,237,0.13));
+  border-color:rgba(0,212,255,0.28);
+}
+.nav-item.active::before{
+  content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);
+  width:3px;height:58%;border-radius:0 3px 3px 0;
+  background:linear-gradient(var(--accent),var(--accent2));
+}
+.nav-icon{font-size:16px;width:18px;text-align:center;flex-shrink:0;}
+.nav-text{font-size:12.5px;font-weight:500;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sidebar-footer{
+  margin-top:auto;padding:12px 14px;border-top:1px solid var(--border);flex-shrink:0;
+}
+.sidebar-features{font-size:10px;color:var(--text3);line-height:1.9;}
+.sidebar-features strong{color:var(--text2);display:block;margin-bottom:3px;font-size:10.5px;}
+.feat-tag{
+  display:inline-block;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.15);
+  color:var(--accent);font-size:9px;font-weight:600;padding:1px 6px;border-radius:4px;
+  margin:1px 2px 1px 0;
+}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar-w);height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+
+/* ── TOPBAR ── */
+.topbar{
+  height:var(--topbar-h);background:var(--bg2);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0;
+}
+.topbar-title{flex:1;min-width:0;}
+.topbar-title h1{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.topbar-title p{font-size:11px;color:var(--text3);margin-top:1px;}
+.topbar-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.btn{
+  padding:7px 13px;border-radius:7px;font-size:12px;font-weight:500;
+  cursor:pointer;border:1px solid var(--border2);background:var(--card);
+  color:var(--text2);display:flex;align-items:center;gap:6px;
+  transition:all var(--transition);font-family:'DM Sans',sans-serif;white-space:nowrap;
+}
+.btn:hover{background:var(--card2);color:var(--text);}
+.btn-accent{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;border:none;font-weight:600;
+  box-shadow:0 3px 14px rgba(0,212,255,0.28);
+}
+.btn-accent:hover{transform:translateY(-1px);box-shadow:0 5px 18px rgba(0,212,255,0.38);color:#fff;}
+.btn-green{background:linear-gradient(135deg,#00c97a,#00ff88);color:#003a1f;border:none;font-weight:600;}
+.btn-green:hover{transform:translateY(-1px);color:#003a1f;}
+.btn-orange{background:linear-gradient(135deg,var(--orange),var(--yellow));color:#1a0800;border:none;font-weight:600;}
+.btn-orange:hover{transform:translateY(-1px);color:#1a0800;}
+.live-badge{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3);}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 7px var(--green);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+
+/* ── FILTERBAR ── */
+.filterbar{
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  padding:8px 20px;display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:wrap;
+}
+.filter-group{display:flex;flex-direction:column;gap:2px;}
+.filter-label{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;}
+.filter-select,.filter-date-input{
+  background:var(--card);border:1px solid var(--border2);color:var(--text);
+  padding:5px 8px;border-radius:7px;font-size:11.5px;font-family:'DM Sans',sans-serif;
+  cursor:pointer;outline:none;transition:border-color var(--transition);
+  appearance:none;-webkit-appearance:none;min-width:100px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='5' viewBox='0 0 9 5'%3E%3Cpath d='M0 0l4.5 5 4.5-5z' fill='%238892b0'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 7px center;padding-right:22px;
+}
+.filter-date-input{padding-right:8px;background-image:none;min-width:120px;}
+.filter-select:focus,.filter-date-input:focus{border-color:var(--accent);}
+.filter-sep{width:1px;height:36px;background:var(--border);flex-shrink:0;}
+.record-badge{
+  margin-left:auto;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.18);
+  border-radius:20px;padding:3px 10px;font-size:11px;color:var(--text3);white-space:nowrap;
+}
+#recordCount{color:var(--accent);font-weight:700;}
+
+/* ── CONTENT ── */
+.content{
+  flex:1;overflow-y:auto;padding:16px 20px 20px;
+  scrollbar-width:thin;scrollbar-color:var(--border2) transparent;
+}
+.content::-webkit-scrollbar{width:4px;}
+.content::-webkit-scrollbar-thumb{background:var(--border2);border-radius:10px;}
+.page{display:none;}
+.page.active{display:block;animation:fadeUp 0.28s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── PAGE HEADER ── */
+.page-header{margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.page-header-left h2{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--text);}
+.page-header-left p{font-size:11.5px;color:var(--text3);margin-top:2px;}
+.page-num{
+  font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;
+  background:linear-gradient(135deg,rgba(0,212,255,0.1),rgba(124,58,237,0.1));
+  border:1px solid rgba(0,212,255,0.2);color:var(--accent);
+  padding:4px 12px;border-radius:20px;flex-shrink:0;
+}
+
+/* ── KPI GRID ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:14px;}
+.kpi-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:13px 14px;position:relative;overflow:hidden;transition:all var(--transition);
+  box-shadow:var(--shadow-card);display:flex;align-items:center;gap:12px;
+}
+.kpi-card:hover{transform:translateY(-1px);border-color:var(--border2);box-shadow:var(--shadow);}
+.kpi-card::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--kpi-color,linear-gradient(90deg,var(--accent),var(--accent2)));
+}
+.kpi-icon-wrap{
+  width:40px;height:40px;border-radius:10px;display:flex;align-items:center;
+  justify-content:center;font-size:18px;flex-shrink:0;
+  background:var(--kpi-bg,rgba(0,212,255,0.1));
+}
+.kpi-body{flex:1;min-width:0;}
+.kpi-label{font-size:10px;color:var(--text3);font-weight:600;letter-spacing:0.4px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.kpi-value{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--text);line-height:1.1;margin-top:1px;}
+.kpi-sub{font-size:10px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.kpi-right{text-align:right;flex-shrink:0;}
+.kpi-badge{
+  display:inline-flex;align-items:center;gap:2px;font-size:10px;font-weight:600;
+  padding:2px 6px;border-radius:4px;
+}
+.kpi-badge.up{background:rgba(0,255,136,0.1);color:var(--green);}
+.kpi-badge.down{background:rgba(255,61,138,0.1);color:var(--pink);}
+.kpi-badge.neutral{background:rgba(0,212,255,0.1);color:var(--accent);}
+
+/* ── CHART LAYOUTS ── */
+.chart-row{display:grid;gap:12px;margin-bottom:12px;}
+.cols-2{grid-template-columns:1fr 1fr;}
+.cols-3{grid-template-columns:1fr 1fr 1fr;}
+.cols-21{grid-template-columns:2fr 1fr;}
+.cols-12{grid-template-columns:1fr 2fr;}
+.cols-1{grid-template-columns:1fr;}
+.chart-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:15px;box-shadow:var(--shadow-card);transition:border-color var(--transition);
+  display:flex;flex-direction:column;
+}
+.chart-card:hover{border-color:var(--border2);}
+.chart-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;gap:8px;}
+.chart-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);}
+.chart-desc{font-size:10.5px;color:var(--text3);margin-top:2px;}
+.chart-tag{
+  font-size:9.5px;background:var(--bg3);border:1px solid var(--border);
+  color:var(--text3);padding:2px 7px;border-radius:4px;white-space:nowrap;flex-shrink:0;
+}
+.chart-wrap{position:relative;flex:1;}
+.h160{height:160px;}
+.h200{height:200px;}
+.h240{height:240px;}
+.h280{height:280px;}
+
+/* ── DATA TABLE ── */
+.table-wrap{overflow-x:auto;border-radius:9px;border:1px solid var(--border);}
+.data-table{width:100%;border-collapse:collapse;font-size:11.5px;}
+.data-table th{
+  background:var(--bg3);padding:9px 12px;text-align:left;
+  font-size:9.5px;font-weight:700;color:var(--text3);letter-spacing:0.9px;text-transform:uppercase;
+  border-bottom:1px solid var(--border);white-space:nowrap;position:sticky;top:0;z-index:1;
+}
+.data-table td{padding:8px 12px;border-bottom:1px solid var(--border);color:var(--text2);white-space:nowrap;}
+.data-table tr:last-child td{border-bottom:none;}
+.data-table tr:hover td{background:var(--bg3);}
+.pill{display:inline-block;padding:2px 7px;border-radius:3px;font-size:9.5px;font-weight:600;}
+.pill-blue{background:rgba(0,212,255,0.1);color:var(--accent);}
+.pill-green{background:rgba(0,255,136,0.1);color:var(--green);}
+.pill-orange{background:rgba(255,107,53,0.1);color:var(--orange);}
+.pill-pink{background:rgba(255,61,138,0.1);color:var(--pink);}
+.pill-yellow{background:rgba(255,214,10,0.1);color:var(--yellow);}
+
+/* ── MATRIX TABLE ── */
+.matrix-wrap{overflow-x:auto;border-radius:9px;border:1px solid var(--border);}
+.matrix-table{width:100%;border-collapse:collapse;font-size:11px;}
+.matrix-table th{background:var(--bg3);padding:8px 10px;font-size:9px;font-weight:700;color:var(--text3);letter-spacing:0.9px;text-transform:uppercase;border-bottom:1px solid var(--border);border-right:1px solid var(--border);white-space:nowrap;}
+.matrix-table td{padding:7px 10px;border-bottom:1px solid var(--border);border-right:1px solid var(--border);text-align:center;font-size:11px;}
+.matrix-table tr:last-child td{border-bottom:none;}
+.matrix-table td:first-child{text-align:left;color:var(--text2);font-weight:500;background:var(--bg3);}
+.matrix-cell{border-radius:4px;padding:3px 6px;font-weight:600;font-size:10.5px;display:inline-block;}
+
+/* ── UPLOAD MODAL ── */
+.modal-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;
+  align-items:center;justify-content:center;
+}
+.modal-overlay.show{display:flex;}
+.modal{
+  background:var(--card);border:1px solid var(--border2);border-radius:14px;
+  padding:28px;width:460px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,0.5);
+}
+.modal h3{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.modal p{font-size:12px;color:var(--text3);margin-bottom:20px;}
+.upload-zone{
+  border:2px dashed var(--border2);border-radius:10px;padding:32px;text-align:center;
+  cursor:pointer;transition:all var(--transition);margin-bottom:16px;
+}
+.upload-zone:hover{border-color:var(--accent);background:rgba(0,212,255,0.04);}
+.upload-zone .icon{font-size:32px;margin-bottom:8px;}
+.upload-zone p{font-size:12px;color:var(--text3);}
+.upload-zone p strong{color:var(--accent);}
+#fileInput{display:none;}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;}
+
+/* ── LOADING ── */
+.loading-overlay{
+  position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;
+  transition:opacity 0.4s;
+}
+.loading-overlay.hidden{opacity:0;pointer-events:none;}
+.loader-logo{
+  width:56px;height:56px;border-radius:16px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:#fff;
+  margin-bottom:22px;box-shadow:0 0 36px rgba(0,212,255,0.45);
+  animation:logoPulse 1.6s infinite;
+}
+@keyframes logoPulse{0%,100%{box-shadow:0 0 36px rgba(0,212,255,0.45);}50%{box-shadow:0 0 56px rgba(0,212,255,0.75);}}
+.loader-bar{width:180px;height:3px;background:var(--border);border-radius:10px;overflow:hidden;}
+.loader-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--accent),var(--accent2));animation:loadFill 2.2s ease forwards;}
+@keyframes loadFill{from{width:0;}to{width:100%;}}
+.loader-text{font-size:12px;color:var(--text3);margin-top:10px;letter-spacing:0.3px;}
+
+/* ── MOBILE ── */
+.hamburger{display:none;flex-direction:column;gap:4px;cursor:pointer;padding:7px;background:var(--card);border:1px solid var(--border);border-radius:7px;}
+.hamburger span{width:16px;height:2px;background:var(--text2);border-radius:2px;}
+.mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:199;}
+.mob-overlay.show{display:block;}
+
+/* ── FLATPICKR DARK ── */
+.flatpickr-calendar{background:var(--card2) !important;border:1px solid var(--border2) !important;border-radius:10px !important;box-shadow:0 8px 32px rgba(0,0,0,0.4) !important;}
+.flatpickr-day{color:var(--text2) !important;}
+.flatpickr-day.selected,.flatpickr-day.startRange,.flatpickr-day.endRange{background:var(--accent) !important;border-color:var(--accent) !important;color:#000 !important;}
+.flatpickr-day:hover{background:var(--bg3) !important;}
+.flatpickr-months .flatpickr-month{background:var(--bg3) !important;color:var(--text) !important;}
+.flatpickr-current-month{color:var(--text) !important;}
+.flatpickr-weekday{color:var(--text3) !important;background:var(--bg3) !important;}
+.flatpickr-day.flatpickr-disabled{color:var(--text3) !important;}
+.numInput,.numInputWrapper input{background:var(--card) !important;color:var(--text) !important;border-color:var(--border) !important;}
+.flatpickr-prev-month,.flatpickr-next-month{fill:var(--text2) !important;}
+.flatpickr-innerContainer{border-top:1px solid var(--border) !important;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1200px){
+  .kpi-grid{grid-template-columns:repeat(3,1fr);}
+  .cols-3{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%);}
+  .sidebar.mob-open{transform:translateX(0);}
+  .main{margin-left:0;}
+  .hamburger{display:flex;}
+  .kpi-grid{grid-template-columns:repeat(2,1fr);}
+  .cols-2,.cols-21,.cols-12{grid-template-columns:1fr;}
+  .cols-3{grid-template-columns:1fr;}
+}
+@media(max-width:600px){
+  .topbar-actions .btn span{display:none;}
+  .kpi-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loader-logo">SC</div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+  <div class="loader-text" id="loaderText">Connecting to Google Sheets…</div>
+</div>
+
+<!-- UPLOAD MODAL -->
+<div class="modal-overlay" id="uploadModal">
+  <div class="modal">
+    <h3>📂 Upload Local Data</h3>
+    <p>Upload your own CSV file to override the Google Sheets data source.</p>
+    <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+      <div class="icon">📄</div>
+      <p><strong>Click to browse</strong> or drag & drop your CSV file</p>
+      <p style="margin-top:6px;font-size:11px;">Supported: .csv with matching schema</p>
+    </div>
+    <input type="file" id="fileInput" accept=".csv" onchange="handleFileUpload(event)"/>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal('uploadModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- MOB OVERLAY -->
+<div class="mob-overlay" id="mobOverlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-mark">SC</div>
+    <div class="brand-info">
+      <h2>Supply Chain Dashboard</h2>
+      <p>Analytics Cockpit v2.0</p>
+    </div>
+  </div>
+  <div class="nav-section-label">Analysis Pages</div>
+  <div class="nav-item active" onclick="showPage(0)" data-page="0">
+    <span class="nav-icon">📊</span>
+    <span class="nav-text">Overview</span>
+  </div>
+  <div class="nav-item" onclick="showPage(1)" data-page="1">
+    <span class="nav-icon">🏭</span>
+    <span class="nav-text">Supplier Analysis</span>
+  </div>
+  <div class="nav-item" onclick="showPage(2)" data-page="2">
+    <span class="nav-icon">🏗️</span>
+    <span class="nav-text">Warehouse & Logistics</span>
+  </div>
+  <div class="nav-item" onclick="showPage(3)" data-page="3">
+    <span class="nav-icon">📦</span>
+    <span class="nav-text">Category Performance</span>
+  </div>
+  <div class="nav-item" onclick="showPage(4)" data-page="4">
+    <span class="nav-icon">⭐</span>
+    <span class="nav-text">Service Quality</span>
+  </div>
+  <div class="sidebar-footer">
+    <div class="sidebar-features">
+      <strong>Dashboard Features</strong>
+      <span class="feat-tag">Live Sheets</span>
+      <span class="feat-tag">25 Charts</span>
+      <span class="feat-tag">Tables</span>
+      <span class="feat-tag">Calendar</span>
+      <span class="feat-tag">Reports</span>
+      <span class="feat-tag">CSV Upload</span>
+      <span class="feat-tag">Dark/Light</span>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="hamburger" id="hamburger" onclick="toggleSidebar()">
+      <span></span><span></span><span></span>
+    </div>
+    <div class="topbar-title">
+      <h1 id="pageTitle">Overview</h1>
+      <p id="pageDesc">Supply chain performance summary</p>
+    </div>
+    <div class="topbar-actions">
+      <div class="live-badge">
+        <div class="live-dot"></div>
+        <span id="lastUpdated">Live</span>
+      </div>
+      <button class="btn" onclick="refreshData()">🔄 <span>Refresh</span></button>
+      <button class="btn btn-orange" onclick="openModal('uploadModal')">📂 <span>Upload CSV</span></button>
+      <button class="btn btn-green" onclick="generateReport()">📄 <span>Report</span></button>
+      <button class="btn" onclick="toggleTheme()" id="themeBtn">🌙 <span>Dark</span></button>
+    </div>
+  </div>
+
+  <!-- FILTER BAR -->
+  <div class="filterbar">
+    <div class="filter-group">
+      <span class="filter-label">📅 Date Range</span>
+      <input type="text" class="filter-date-input" id="dateRangePicker" placeholder="Select date range" readonly/>
+    </div>
+    <div class="filter-sep"></div>
+    <div class="filter-group">
+      <span class="filter-label">Year</span>
+      <select class="filter-select" id="f-year" onchange="applyFilters()"><option value="">All</option></select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Month</span>
+      <select class="filter-select" id="f-month" onchange="applyFilters()"><option value="">All</option></select>
+    </div>
+    <div class="filter-sep"></div>
+    <div class="filter-group">
+      <span class="filter-label">Supplier</span>
+      <select class="filter-select" id="f-supplier" onchange="applyFilters()"><option value="">All</option></select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Warehouse</span>
+      <select class="filter-select" id="f-warehouse" onchange="applyFilters()"><option value="">All</option></select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Shipping</span>
+      <select class="filter-select" id="f-shipping" onchange="applyFilters()"><option value="">All</option></select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Category</span>
+      <select class="filter-select" id="f-category" onchange="applyFilters()"><option value="">All</option></select>
+    </div>
+    <div class="filter-sep"></div>
+    <button class="btn btn-accent" onclick="resetFilters()" style="align-self:flex-end;">✕ Reset</button>
+    <div class="record-badge" style="align-self:flex-end;"><span id="recordCount">—</span> records</div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- PAGE 1: OVERVIEW -->
+    <div class="page active" id="page-0">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h2>📊 Overview</h2>
+          <p>Full supply chain summary — orders, rates, trends, and breakdowns</p>
+        </div>
+        <span class="page-num">PAGE 01 / 05</span>
+      </div>
+      <div class="kpi-grid" id="kpi-overview"></div>
+      <div class="chart-row cols-2">
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="chart-title">Monthly Orders Trend</div><div class="chart-desc">Total orders tracked by month</div></div><span class="chart-tag">Line</span></div>
+          <div class="chart-wrap h200"><canvas id="ch-monthlyTrend"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="chart-title">Orders by Category</div><div class="chart-desc">Volume split per product category</div></div><span class="chart-tag">Bar</span></div>
+          <div class="chart-wrap h200"><canvas id="ch-catBar"></canvas></div>
+        </div>
+      </div>
+      <div class="chart-row cols-3">
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="chart-title">Shipping Mix</div><div class="chart-desc">Air, Sea, Road, Rail %</div></div><span class="chart-tag">Donut</span></div>
+          <div class="chart-wrap h160"><canvas id="ch-shippingDonut"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="chart-title">On-Time vs Returns</div><div class="chart-desc">Monthly rate comparison</div></div><span class="chart-tag">Area</span></div>
+          <div class="chart-wrap h160"><canvas id="ch-onTimeArea"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="chart-title">Fulfillment by Shipping</div><div class="chart-desc">Fulfillment rate per method</div></div><span class="chart-tag">Polar</span></div>
+          <div class="chart-wrap h160"><canvas id="ch-fulfillPolar"></canvas></div>
+        </div>
+      </div>
+      <div class="chart-row cols-1">
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="chart-title">Monthly Orders vs Fulfilled vs On-Time</div><div class="chart-desc">Side-by-side grouped bar comparison</div></div><span class="chart-tag">Grouped Bar</span></div>
+          <div class="chart-wrap h240"><canvas id="ch-groupedMonthly"></canvas></div>
+        </div>
+      </div>
+      <!-- OVERVIEW TABLE -->
+      <div class="chart-card" style="margin-bottom:12px;">
+        <div class="chart-head"><div><div class="chart-title">📋 Top 10 Records — Detailed View</div><div class="chart-desc">High-volume order records after current filter</div></div><span class="chart-tag">Data Table</span></div>
+        <div class="table-wrap" style="max-height:260px;overflow-y:auto;">
+          <table class="data-table" id="tbl-overview"></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 2: SUPPLIER -->
+    <div class="page" id="page-1">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h2>🏭 Supplier Analysis</h2>
+          <p>Supplier performance, volumes, on-time accuracy, and market share</p>
+        </div>
+        <span class="page-num">PAGE 02 / 05</span>
+      </div>
+      <div class="kpi-grid" id="kpi-supplier"></div>
+      <div class="chart-row cols-2">
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="chart-title">Orders by Supplier</div><div class="chart-desc">Total order volume per supplier</div></div><span class="chart-tag">Bar</span></div>
+          <div class="chart-wrap h200"><canvas id="ch-supplierBar"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="chart-title">Supplier Market Share</div><div class="chart-desc">Order volume distribution</div></div><span class="chart-tag">Donut</span></div>
+          <div class="chart-wrap h200"><canvas id="ch-supplierDonut"></canvas></div>
+        </div>
+      </div>
+      <div class="chart-row cols-2">
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="chart-title">On-Time Rate by Supplier</div><div class="chart-desc">Delivery accuracy percentage</div></div><span class="chart-tag">H-Bar</span></div>
+          <div class="chart-wrap h200"><canvas id="ch-supplierOnTime"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="chart-title">Return Rate by Supplier</div><div class="chart-desc">Returns as % of total orders</div></div><span class="chart-tag">Bar</span></div>
+          <div class="chart-wrap h200"><canvas id="ch-supplierReturn"></canvas></div>
+        </div>
+      </div>
+      <div class="chart-row cols-1">
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="chart-title">Supplier Performance Radar — Top 5</div><div class="chart-desc">On-Time, Fulfillment, Correct Orders, No-Return score comparison</div></div><span class="chart-tag">Radar</span></div>
+          <div class="chart-wrap h280" style="max-width:520px;margin:0 auto;"><canvas id="ch-supplierRadar"></canvas></div>
+        </div>
+      </div>
+      <!-- SUPPLIER MATRIX -->
+      <div class="chart-card">
+        <div class="chart-head"><div><div class="chart-title">🗂️ Supplier Performance Matrix</div><div class="chart-desc">All suppliers — Orders, On-Time%, Fulfillment%, Return% overview</div></div><span class="chart-tag">Matrix Table</span></div>
+        <div class="matrix-wrap" style="max-height:240px;overflow-y:auto;">
+          <table class="matrix-table" id="matrix-supplier"></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 3: WAREHOUSE -->
+    <div class="page" id="page-2">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h2>🏗️ Warehouse & Logistics</h2>
+          <p>Warehouse capacity, shipping efficiency, and location analytics</p>
+        </div>
+        <span class="page-num">PAGE 03 / 05</span>
+      </div>
+      <div class="kpi-grid" id="kpi-warehouse"></div>
+      <div class="chart-row cols-2">
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="chart-title">Orders by Warehouse</div><div class="chart-desc">Total volume per location</div></div><span class="chart-tag">Bar</span></div>
+          <div class="chart-wrap h200"><canvas id="ch-warehouseBar"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="chart-title">Shipping Method Split</div><div class="chart-desc">Distribution across all methods</div></div><span class="chart-tag">Donut</span></div>
+          <div class="chart-wrap h200"><canvas id="ch-warehouseShipping"></canvas></div>
+        </div>
+      </div>
+      <div class="chart-row cols-3">
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="chart-title">Fulfillment by Warehouse</div><div class="chart-desc">Fulfillment rate per location</div></div><span class="chart-tag">Bar</span></div>
+          <div class="chart-wrap h160"><canvas id="ch-warehouseFulfill"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="chart-title">On-Time by Location</div><div class="chart-desc">Delivery accuracy per warehouse</div></div><span class="chart-tag">H-Bar</span></div>
+          <div class="chart-wrap h160"><canvas id="ch-warehouseOnTime"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="chart-title">Returns by Warehouse</div><div class="chart-desc">Return % per location</div></div><span class="chart-tag">Polar</span></div>
+          <div class="chart-wrap h160"><canvas id="ch-warehousePolar"></canvas></div>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-head"><div><div class="chart-title">🗂️ Warehouse Performance Matrix</div><div class="chart-desc">Location × Metric full breakdown</div></div><span class="chart-tag">Matrix</span></div>
+        <div class="matrix-wrap" style="max-height:220px;overflow-y:auto;">
+          <table class="matrix-table" id="matrix-warehouse"></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 4: CATEGORY -->
+    <div class="page" id="page-3">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h2>📦 Category Performance</h2>
+          <p>Product category analytics — volume, trends, fulfillment, and returns</p>
+        </div>
+        <span class="page-num">PAGE 04 / 05</span>
+      </div>
+      <div class="kpi-grid" id="kpi-category"></div>
+      <div class="chart-row cols-21">
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="chart-title">Category Monthly Trend</div><div class="chart-desc">Orders per category across months</div></div><span class="chart-tag">Multi-Line</span></div>
+          <div class="chart-wrap h240"><canvas id="ch-catTrend"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="chart-title">Category Share</div><div class="chart-desc">Order volume distribution</div></div><span class="chart-tag">Donut</span></div>
+          <div class="chart-wrap h240"><canvas id="ch-catDonut"></canvas></div>
+        </div>
+      </div>
+      <div class="chart-row cols-2">
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="chart-title">Fulfillment Rate by Category</div><div class="chart-desc">How well each category is fulfilled</div></div><span class="chart-tag">Bar</span></div>
+          <div class="chart-wrap h200"><canvas id="ch-catFulfill"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="chart-title">Return Rate by Category</div><div class="chart-desc">Returns % per product type</div></div><span class="chart-tag">Bar</span></div>
+          <div class="chart-wrap h200"><canvas id="ch-catReturn"></canvas></div>
+        </div>
+      </div>
+      <div class="chart-row cols-1">
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="chart-title">Category × Shipping Method — Stacked Breakdown</div><div class="chart-desc">Which shipping method each category uses most</div></div><span class="chart-tag">Stacked Bar</span></div>
+          <div class="chart-wrap h200"><canvas id="ch-catStacked"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 5: SERVICE QUALITY -->
+    <div class="page" id="page-4">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h2>⭐ Service Quality & Trends</h2>
+          <p>Operational excellence — on-time, accuracy, returns, and quality scores</p>
+        </div>
+        <span class="page-num">PAGE 05 / 05</span>
+      </div>
+      <div class="kpi-grid" id="kpi-quality"></div>
+      <div class="chart-row cols-2">
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="chart-title">Quality Metrics Trend</div><div class="chart-desc">On-Time, Fulfillment & Return % monthly</div></div><span class="chart-tag">Multi-Line</span></div>
+          <div class="chart-wrap h200"><canvas id="ch-qualityTrend"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="chart-title">Supplier Quality Radar — Top 6</div><div class="chart-desc">Multi-axis performance comparison</div></div><span class="chart-tag">Radar</span></div>
+          <div class="chart-wrap h200"><canvas id="ch-qualityRadar"></canvas></div>
+        </div>
+      </div>
+      <div class="chart-row cols-3">
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="chart-title">Correct Orders by Shipping</div><div class="chart-desc">Accuracy per shipping method</div></div><span class="chart-tag">Bar</span></div>
+          <div class="chart-wrap h160"><canvas id="ch-correctShip"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="chart-title">Monthly Return Rate</div><div class="chart-desc">Return % trend over months</div></div><span class="chart-tag">Area</span></div>
+          <div class="chart-wrap h160"><canvas id="ch-returnTrend"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="chart-title">Warehouse Quality Score</div><div class="chart-desc">On-time rate per warehouse</div></div><span class="chart-tag">Polar</span></div>
+          <div class="chart-wrap h160"><canvas id="ch-qualityPolar"></canvas></div>
+        </div>
+      </div>
+      <div class="chart-row cols-1">
+        <div class="chart-card">
+          <div class="chart-head"><div><div class="chart-title">Top 10 Supplier — Orders vs On-Time vs Returns</div><div class="chart-desc">Comprehensive supplier quality grouped comparison</div></div><span class="chart-tag">Grouped Bar</span></div>
+          <div class="chart-wrap h240"><canvas id="ch-supplierQuality"></canvas></div>
+        </div>
+      </div>
+      <!-- QUALITY SUMMARY TABLE -->
+      <div class="chart-card">
+        <div class="chart-head"><div><div class="chart-title">📋 Full Quality Summary Table</div><div class="chart-desc">All metrics per supplier — sortable reference</div></div><span class="chart-tag">Summary Table</span></div>
+        <div class="table-wrap" style="max-height:260px;overflow-y:auto;">
+          <table class="data-table" id="tbl-quality"></table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════════════════════
+const SHEET_ID='1t8surCotYHPBL9o9sDB8Qn9zGiwsooyTXRh-CD3o0nk';
+const CSV_URL=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const PAL=['#00d4ff','#7c3aed','#00ff88','#ff6b35','#ff3d8a','#ffd60a','#06b6d4','#8b5cf6','#10b981','#f97316'];
+const PAL2=['#00d4ff','#00ff88','#ffd60a','#ff3d8a','#ff6b35'];
+
+let rawData=[],filteredData=[],charts={},isDark=true,currentPage=0;
+let dateFilter={from:null,to:null};
+
+const PAGES=[
+  {title:'Overview',desc:'Supply chain performance summary — orders, trends, and breakdowns'},
+  {title:'Supplier Analysis',desc:'Supplier performance, volumes, on-time accuracy and market share'},
+  {title:'Warehouse & Logistics',desc:'Warehouse capacity, shipping efficiency, and location analytics'},
+  {title:'Category Performance',desc:'Product category analytics — volume, trends, and fulfillment'},
+  {title:'Service Quality & Trends',desc:'Operational excellence — on-time, accuracy, and quality scores'},
+];
+
+// ═══════════════════════════════════════════════════════
+//  CHART DEFAULTS
+// ═══════════════════════════════════════════════════════
+Chart.defaults.color='#8892b0';
+Chart.defaults.borderColor='#1e2440';
+Chart.defaults.font.family="'DM Sans',sans-serif";
+Chart.defaults.font.size=11;
+Chart.defaults.plugins.legend.labels.boxWidth=10;
+Chart.defaults.plugins.legend.labels.padding=14;
+Chart.defaults.plugins.tooltip.backgroundColor='#0c0f1e';
+Chart.defaults.plugins.tooltip.borderColor='#1e2440';
+Chart.defaults.plugins.tooltip.borderWidth=1;
+Chart.defaults.plugins.tooltip.titleColor='#e8ecf8';
+Chart.defaults.plugins.tooltip.bodyColor='#8892b0';
+Chart.defaults.plugins.tooltip.padding=10;
+Chart.defaults.plugins.tooltip.cornerRadius=7;
+
+function cDef(extra={}){
+  return{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},datalabels:{display:false},...(extra.plugins||{})},
+    scales:{
+      x:{grid:{color:'rgba(30,36,64,0.8)'},ticks:{color:'#8892b0',maxRotation:40}},
+      y:{grid:{color:'rgba(30,36,64,0.8)'},ticks:{color:'#8892b0'}},
+      ...(extra.scales||{})
+    },...extra
+  };
+}
+function cNoAx(extra={}){
+  return{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:9,padding:10,color:'#8892b0'}},...(extra.plugins||{})},
+    ...extra
+  };
+}
+function mkC(id,type,data,opts){
+  if(charts[id])charts[id].destroy();
+  const ctx=document.getElementById(id);
+  if(!ctx)return;
+  charts[id]=new Chart(ctx,{type,data,options:opts});
+}
+
+// ═══════════════════════════════════════════════════════
+//  DATA LOAD
+// ═══════════════════════════════════════════════════════
+async function loadData(){
+  const lo=document.getElementById('loadingOverlay');
+  const lt=document.getElementById('loaderText');
+  lo.classList.remove('hidden');
+  lt.textContent='Connecting to Google Sheets…';
+  try{
+    const r=await fetch(CSV_URL+'&cachebust='+Date.now());
+    if(!r.ok)throw new Error('fetch failed');
+    const t=await r.text();
+    rawData=parseCSV(t);
+    lt.textContent=`Loaded ${rawData.length} records. Building dashboard…`;
+    populateFilters();
+    filteredData=[...rawData];
+    updateCount();
+    document.getElementById('lastUpdated').textContent='Live · '+new Date().toLocaleTimeString();
+    setTimeout(()=>{lo.classList.add('hidden');renderAll();},500);
+  }catch(e){
+    lt.textContent='⚠️ Could not fetch. Ensure sheet is set to "Anyone with link – Viewer".';
+    console.error(e);
+  }
+}
+
+function parseCSV(text){
+  const lines=text.trim().split('\n');
+  const headers=lines[0].split(',').map(h=>h.replace(/"/g,'').trim());
+  return lines.slice(1).map(line=>{
+    const vals=[];let cur='',inQ=false;
+    for(const c of line){if(c==='"')inQ=!inQ;else if(c===','&&!inQ){vals.push(cur.trim());cur='';}else cur+=c;}
+    vals.push(cur.trim());
+    const obj={};
+    headers.forEach((h,i)=>obj[h]=(vals[i]||'').replace(/^"|"$/g,''));
+    obj['Total Orders']=+obj['Total Orders']||0;
+    obj['On-Time Deliveries']=+obj['On-Time Deliveries']||0;
+    obj['Correct Orders']=+obj['Correct Orders']||0;
+    obj['Returned Orders']=+obj['Returned Orders']||0;
+    obj['Fulfilled Orders']=+obj['Fulfilled Orders']||0;
+    // Parse date
+    const dp=obj['Date']?new Date(obj['Date'].replace(/(\d+)-([A-Za-z]+)-(\d+)/,'$1 $2 20$3')):null;
+    obj['_date']=dp&&!isNaN(dp)?dp:null;
+    return obj;
+  }).filter(r=>r['Total Orders']>0);
+}
+
+// ═══════════════════════════════════════════════════════
+//  FILE UPLOAD
+// ═══════════════════════════════════════════════════════
+function handleFileUpload(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    rawData=parseCSV(ev.target.result);
+    populateFilters();filteredData=[...rawData];
+    updateCount();closeModal('uploadModal');
+    document.getElementById('lastUpdated').textContent='Local CSV · '+file.name;
+    renderAll();
+  };
+  reader.readAsText(file);
+  e.target.value='';
+}
+
+// ═══════════════════════════════════════════════════════
+//  CALENDAR (FLATPICKR)
+// ═══════════════════════════════════════════════════════
+let picker;
+function initCalendar(){
+  picker=flatpickr('#dateRangePicker',{
+    mode:'range',dateFormat:'d M Y',
+    onChange(selectedDates){
+      if(selectedDates.length===2){
+        dateFilter.from=selectedDates[0];
+        dateFilter.to=selectedDates[1];
+      }else{dateFilter.from=null;dateFilter.to=null;}
+      applyFilters();
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+//  FILTERS
+// ═══════════════════════════════════════════════════════
+function populateFilters(){
+  const uniq=k=>[...new Set(rawData.map(r=>r[k]).filter(Boolean))].sort();
+  fillSel('f-year',uniq('Year'));
+  fillSel('f-month',MONTHS.filter(m=>uniq('Month').includes(m)));
+  fillSel('f-supplier',uniq('Supplier Name'));
+  fillSel('f-warehouse',uniq('Warehouse Location'));
+  fillSel('f-shipping',uniq('Shipping Method'));
+  fillSel('f-category',uniq('Product Category'));
+}
+function fillSel(id,vals){
+  const s=document.getElementById(id);
+  // keep only first "All" option, remove rest
+  while(s.options.length>1)s.remove(1);
+  vals.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;s.appendChild(o);});
+}
+function applyFilters(){
+  const y=fv('f-year'),m=fv('f-month'),s=fv('f-supplier'),w=fv('f-warehouse'),sh=fv('f-shipping'),c=fv('f-category');
+  filteredData=rawData.filter(r=>{
+    if(y&&r['Year']!=y)return false;
+    if(m&&r['Month']!=m)return false;
+    if(s&&r['Supplier Name']!=s)return false;
+    if(w&&r['Warehouse Location']!=w)return false;
+    if(sh&&r['Shipping Method']!=sh)return false;
+    if(c&&r['Product Category']!=c)return false;
+    if(dateFilter.from&&dateFilter.to&&r['_date']){
+      if(r['_date']<dateFilter.from||r['_date']>dateFilter.to)return false;
+    }
+    return true;
+  });
+  updateCount();renderAll();
+}
+function resetFilters(){
+  ['f-year','f-month','f-supplier','f-warehouse','f-shipping','f-category'].forEach(id=>document.getElementById(id).value='');
+  dateFilter={from:null,to:null};
+  if(picker)picker.clear();
+  applyFilters();
+}
+function fv(id){return document.getElementById(id).value;}
+function updateCount(){document.getElementById('recordCount').textContent=filteredData.length.toLocaleString();}
+
+// ═══════════════════════════════════════════════════════
+//  AGGREGATION HELPERS
+// ═══════════════════════════════════════════════════════
+function aggBy(data,key){
+  const m={};
+  data.forEach(r=>{
+    const k=r[key]||'Unknown';
+    if(!m[k])m[k]={total:0,ontime:0,correct:0,returned:0,fulfilled:0,count:0};
+    m[k].total+=r['Total Orders'];m[k].ontime+=r['On-Time Deliveries'];
+    m[k].correct+=r['Correct Orders'];m[k].returned+=r['Returned Orders'];
+    m[k].fulfilled+=r['Fulfilled Orders'];m[k].count++;
+  });
+  return m;
+}
+function pct(a,b){return b>0?Math.round(a/b*100):0;}
+function heatColor(val){
+  if(val>=80)return{bg:'rgba(0,255,136,0.15)',color:'#00ff88'};
+  if(val>=60)return{bg:'rgba(255,214,10,0.15)',color:'#ffd60a'};
+  return{bg:'rgba(255,61,138,0.15)',color:'#ff3d8a'};
+}
+
+// ═══════════════════════════════════════════════════════
+//  KPI RENDERER
+// ═══════════════════════════════════════════════════════
+function renderKPI(id,cards){
+  document.getElementById(id).innerHTML=cards.map(c=>`
+    <div class="kpi-card" style="--kpi-color:${c.color||'linear-gradient(90deg,#00d4ff,#7c3aed)'};--kpi-bg:${c.bg||'rgba(0,212,255,0.1)'}">
+      <div class="kpi-icon-wrap">${c.icon}</div>
+      <div class="kpi-body">
+        <div class="kpi-label">${c.label}</div>
+        <div class="kpi-value">${c.value}</div>
+        <div class="kpi-sub">${c.sub}</div>
+      </div>
+      ${c.badge?`<div class="kpi-right"><div class="kpi-badge ${c.bt||'neutral'}">${c.badge}</div></div>`:''}
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+//  PAGE 1 — OVERVIEW
+// ═══════════════════════════════════════════════════════
+function renderOverview(){
+  const d=filteredData;
+  const total=d.reduce((s,r)=>s+r['Total Orders'],0);
+  const ontime=d.reduce((s,r)=>s+r['On-Time Deliveries'],0);
+  const fulfilled=d.reduce((s,r)=>s+r['Fulfilled Orders'],0);
+  const returned=d.reduce((s,r)=>s+r['Returned Orders'],0);
+  const correct=d.reduce((s,r)=>s+r['Correct Orders'],0);
+  const suppCount=[...new Set(d.map(r=>r['Supplier Name']))].length;
+
+  renderKPI('kpi-overview',[
+    {icon:'📦',label:'Total Orders',value:total.toLocaleString(),sub:'All filtered records',color:'linear-gradient(90deg,#00d4ff,#7c3aed)',bg:'rgba(0,212,255,0.08)',badge:'Lifetime',bt:'neutral'},
+    {icon:'⏱️',label:'On-Time Rate',value:pct(ontime,total)+'%',sub:`${ontime.toLocaleString()} on-time`,color:'linear-gradient(90deg,#00ff88,#06b6d4)',bg:'rgba(0,255,136,0.08)',badge:'▲ Target 80%',bt:'up'},
+    {icon:'✅',label:'Fulfillment Rate',value:pct(fulfilled,total)+'%',sub:`${fulfilled.toLocaleString()} fulfilled`,color:'linear-gradient(90deg,#ffd60a,#ff6b35)',bg:'rgba(255,214,10,0.08)',badge:'▲ Good',bt:'up'},
+    {icon:'↩️',label:'Return Rate',value:pct(returned,total)+'%',sub:`${returned.toLocaleString()} returned`,color:'linear-gradient(90deg,#ff3d8a,#ff6b35)',bg:'rgba(255,61,138,0.08)',badge:'▼ Lower=Better',bt:'down'},
+    {icon:'🎯',label:'Correct Orders',value:pct(correct,total)+'%',sub:`${correct.toLocaleString()} correct`,color:'linear-gradient(90deg,#8b5cf6,#00d4ff)',bg:'rgba(139,92,246,0.08)'},
+    {icon:'🏭',label:'Active Suppliers',value:suppCount,sub:'Unique in selection',color:'linear-gradient(90deg,#06b6d4,#10b981)',bg:'rgba(6,182,212,0.08)'},
+  ]);
+
+  const byM=aggBy(d,'Month');
+  const mLabels=MONTHS.filter(m=>byM[m]);
+
+  mkC('ch-monthlyTrend','line',{labels:mLabels,datasets:[{
+    label:'Total Orders',data:mLabels.map(m=>byM[m].total),
+    borderColor:'#00d4ff',backgroundColor:'rgba(0,212,255,0.09)',fill:true,tension:0.4,pointBackgroundColor:'#00d4ff',pointRadius:4,pointHoverRadius:7
+  }]},cDef({plugins:{legend:{display:false}}}));
+
+  const byC=aggBy(d,'Product Category');
+  const cats=Object.keys(byC).sort((a,b)=>byC[b].total-byC[a].total);
+  mkC('ch-catBar','bar',{labels:cats,datasets:[{label:'Orders',data:cats.map(c=>byC[c].total),backgroundColor:PAL,borderRadius:6}]},
+    cDef({plugins:{legend:{display:false}}}));
+
+  const byS=aggBy(d,'Shipping Method');const skeys=Object.keys(byS);
+  mkC('ch-shippingDonut','doughnut',{labels:skeys,datasets:[{data:skeys.map(k=>byS[k].total),backgroundColor:PAL,borderWidth:2,borderColor:isDark?'#131729':'#fff',hoverOffset:8}]},cNoAx());
+
+  mkC('ch-onTimeArea','line',{labels:mLabels,datasets:[
+    {label:'On-Time %',data:mLabels.map(m=>{const a=byM[m];return a?pct(a.ontime,a.total):0;}),borderColor:'#00ff88',backgroundColor:'rgba(0,255,136,0.1)',fill:true,tension:0.4,pointRadius:3},
+    {label:'Return %',data:mLabels.map(m=>{const a=byM[m];return a?pct(a.returned,a.total):0;}),borderColor:'#ff3d8a',backgroundColor:'rgba(255,61,138,0.07)',fill:true,tension:0.4,pointRadius:3}
+  ]},cDef({plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:9,padding:10,color:'#8892b0'}}}}));
+
+  mkC('ch-fulfillPolar','polarArea',{labels:skeys,datasets:[{data:skeys.map(k=>pct(byS[k].fulfilled,byS[k].total)),backgroundColor:PAL.map(c=>c+'99'),borderColor:PAL,borderWidth:1}]},
+    cNoAx({scales:{r:{grid:{color:'#1e2440'},ticks:{color:'#8892b0',backdropColor:'transparent'}}}}));
+
+  mkC('ch-groupedMonthly','bar',{labels:mLabels,datasets:[
+    {label:'Total Orders',data:mLabels.map(m=>byM[m]?.total||0),backgroundColor:'rgba(0,212,255,0.7)',borderRadius:4},
+    {label:'Fulfilled',data:mLabels.map(m=>byM[m]?.fulfilled||0),backgroundColor:'rgba(0,255,136,0.7)',borderRadius:4},
+    {label:'On-Time',data:mLabels.map(m=>byM[m]?.ontime||0),backgroundColor:'rgba(255,214,10,0.7)',borderRadius:4}
+  ]},cDef({plugins:{legend:{display:true,position:'top',labels:{boxWidth:9,padding:12,color:'#8892b0'}}}}));
+
+  // Overview table
+  const top20=[...d].sort((a,b)=>b['Total Orders']-a['Total Orders']).slice(0,20);
+  renderTable('tbl-overview',
+    ['Record ID','Date','Supplier Name','Warehouse Location','Shipping Method','Product Category','Total Orders','On-Time Deliveries','Fulfilled Orders','Returned Orders'],
+    top20.map(r=>[r['Record ID'],r['Date'],r['Supplier Name'],r['Warehouse Location'],
+      `<span class="pill pill-blue">${r['Shipping Method']}</span>`,
+      `<span class="pill pill-orange">${r['Product Category']}</span>`,
+      `<strong style="color:var(--accent)">${r['Total Orders'].toLocaleString()}</strong>`,
+      r['On-Time Deliveries'],r['Fulfilled Orders'],
+      `<span class="pill pill-pink">${r['Returned Orders']}</span>`
+    ])
+  );
+}
+
+// ═══════════════════════════════════════════════════════
+//  PAGE 2 — SUPPLIER
+// ═══════════════════════════════════════════════════════
+function renderSupplier(){
+  const d=filteredData;
+  const bySup=aggBy(d,'Supplier Name');
+  const suppArr=Object.entries(bySup).sort((a,b)=>b[1].total-a[1].total);
+  const bestOT=Object.entries(bySup).sort((a,b)=>pct(b[1].ontime,b[1].total)-pct(a[1].ontime,a[1].total))[0];
+  const totAll=d.reduce((s,r)=>s+r['Total Orders'],0);
+  const fulAll=d.reduce((s,r)=>s+r['Fulfilled Orders'],0);
+  const retAll=d.reduce((s,r)=>s+r['Returned Orders'],0);
+
+  renderKPI('kpi-supplier',[
+    {icon:'🥇',label:'Top Supplier',value:suppArr[0]?.[0]||'—',sub:'Highest order volume',color:'linear-gradient(90deg,#ffd60a,#ff6b35)',bg:'rgba(255,214,10,0.08)'},
+    {icon:'🏭',label:'Total Suppliers',value:suppArr.length,sub:'Unique suppliers active',color:'linear-gradient(90deg,#00d4ff,#7c3aed)',bg:'rgba(0,212,255,0.08)'},
+    {icon:'⏱️',label:'Best On-Time',value:bestOT?pct(bestOT[1].ontime,bestOT[1].total)+'%':'—',sub:bestOT?.[0]||'',color:'linear-gradient(90deg,#00ff88,#06b6d4)',bg:'rgba(0,255,136,0.08)',badge:'Top performer',bt:'up'},
+    {icon:'↩️',label:'Avg Return Rate',value:pct(retAll,totAll)+'%',sub:'Across all suppliers',color:'linear-gradient(90deg,#ff3d8a,#ff6b35)',bg:'rgba(255,61,138,0.08)'},
+    {icon:'✅',label:'Avg Fulfillment',value:pct(fulAll,totAll)+'%',sub:'Across all suppliers',color:'linear-gradient(90deg,#8b5cf6,#00d4ff)',bg:'rgba(139,92,246,0.08)'},
+    {icon:'📈',label:'Top Vol.',value:suppArr[0]?suppArr[0][1].total.toLocaleString():'—',sub:'Orders — #1 supplier',color:'linear-gradient(90deg,#06b6d4,#10b981)',bg:'rgba(6,182,212,0.08)'},
+  ]);
+
+  const top10=suppArr.slice(0,10);const sL=top10.map(([k])=>k);
+  mkC('ch-supplierBar','bar',{labels:sL,datasets:[{label:'Orders',data:top10.map(([,v])=>v.total),backgroundColor:PAL,borderRadius:5}]},cDef({plugins:{legend:{display:false}}}));
+  mkC('ch-supplierDonut','doughnut',{labels:sL,datasets:[{data:top10.map(([,v])=>v.total),backgroundColor:PAL,borderWidth:2,borderColor:isDark?'#131729':'#fff',hoverOffset:8}]},cNoAx());
+
+  const sortOT=Object.entries(bySup).sort((a,b)=>pct(b[1].ontime,b[1].total)-pct(a[1].ontime,a[1].total)).slice(0,10);
+  mkC('ch-supplierOnTime','bar',{labels:sortOT.map(([k])=>k),datasets:[{label:'On-Time %',data:sortOT.map(([,v])=>pct(v.ontime,v.total)),backgroundColor:'rgba(0,255,136,0.7)',borderRadius:5}]},
+    cDef({indexAxis:'y',plugins:{legend:{display:false}}}));
+
+  const sortRet=Object.entries(bySup).sort((a,b)=>pct(b[1].returned,b[1].total)-pct(a[1].returned,a[1].total)).slice(0,10);
+  mkC('ch-supplierReturn','bar',{labels:sortRet.map(([k])=>k),datasets:[{label:'Return %',data:sortRet.map(([,v])=>pct(v.returned,v.total)),backgroundColor:'rgba(255,61,138,0.7)',borderRadius:5}]},
+    cDef({plugins:{legend:{display:false}}}));
+
+  const top5=suppArr.slice(0,5);
+  mkC('ch-supplierRadar','radar',{
+    labels:['On-Time %','Fulfillment %','Correct %','No-Return %'],
+    datasets:top5.map(([name,v],i)=>({label:name,data:[pct(v.ontime,v.total),pct(v.fulfilled,v.total),pct(v.correct,v.total),100-pct(v.returned,v.total)],borderColor:PAL[i],backgroundColor:PAL[i]+'22',pointBackgroundColor:PAL[i]}))
+  },{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:9,padding:8,color:'#8892b0'}}},scales:{r:{grid:{color:'#1e2440'},angleLines:{color:'#1e2440'},ticks:{color:'#8892b0',backdropColor:'transparent'}}}});
+
+  // Matrix
+  const matRows=suppArr.map(([name,v])=>{
+    const ot=pct(v.ontime,v.total),fu=pct(v.fulfilled,v.total),co=pct(v.correct,v.total),re=pct(v.returned,v.total);
+    const hc=heatColor;
+    return[name,v.total.toLocaleString(),
+      `<span class="matrix-cell" style="background:${hc(ot).bg};color:${hc(ot).color}">${ot}%</span>`,
+      `<span class="matrix-cell" style="background:${hc(fu).bg};color:${hc(fu).color}">${fu}%</span>`,
+      `<span class="matrix-cell" style="background:${hc(co).bg};color:${hc(co).color}">${co}%</span>`,
+      `<span class="matrix-cell" style="background:${re<=5?hc(80).bg:hc(40).bg};color:${re<=5?hc(80).color:hc(40).color}">${re}%</span>`
+    ];
+  });
+  renderTable('matrix-supplier',['Supplier','Total Orders','On-Time %','Fulfillment %','Correct %','Return %'],matRows);
+}
+
+// ═══════════════════════════════════════════════════════
+//  PAGE 3 — WAREHOUSE
+// ═══════════════════════════════════════════════════════
+function renderWarehouse(){
+  const d=filteredData;
+  const byWH=aggBy(d,'Warehouse Location');
+  const byShip=aggBy(d,'Shipping Method');
+  const whArr=Object.entries(byWH).sort((a,b)=>b[1].total-a[1].total);
+  const bestShip=Object.entries(byShip).sort((a,b)=>pct(b[1].fulfilled,b[1].total)-pct(a[1].fulfilled,a[1].total))[0];
+  const bestOTWH=whArr.slice().sort((a,b)=>pct(b[1].ontime,b[1].total)-pct(a[1].ontime,a[1].total))[0];
+
+  renderKPI('kpi-warehouse',[
+    {icon:'🏆',label:'Top Warehouse',value:whArr[0]?.[0]||'—',sub:'Highest order volume',color:'linear-gradient(90deg,#ffd60a,#ff6b35)',bg:'rgba(255,214,10,0.08)'},
+    {icon:'🏗️',label:'Total Warehouses',value:whArr.length,sub:'Active locations',color:'linear-gradient(90deg,#00d4ff,#7c3aed)',bg:'rgba(0,212,255,0.08)'},
+    {icon:'🚢',label:'Best Shipping',value:bestShip?.[0]||'—',sub:'Highest fulfillment rate',color:'linear-gradient(90deg,#00ff88,#06b6d4)',bg:'rgba(0,255,136,0.08)',badge:'Top method',bt:'up'},
+    {icon:'📦',label:'Top WH Volume',value:whArr[0]?whArr[0][1].total.toLocaleString():'—',sub:'Orders — top warehouse',color:'linear-gradient(90deg,#8b5cf6,#00d4ff)',bg:'rgba(139,92,246,0.08)'},
+    {icon:'✅',label:'Best WH Fulfill',value:whArr.slice().sort((a,b)=>pct(b[1].fulfilled,b[1].total)-pct(a[1].fulfilled,a[1].total))[0]?pct(whArr.slice().sort((a,b)=>pct(b[1].fulfilled,b[1].total)-pct(a[1].fulfilled,a[1].total))[0][1].fulfilled,whArr.slice().sort((a,b)=>pct(b[1].fulfilled,b[1].total)-pct(a[1].fulfilled,a[1].total))[0][1].total)+'%':'—',sub:'Best fulfillment location',color:'linear-gradient(90deg,#ff6b35,#ffd60a)',bg:'rgba(255,107,53,0.08)'},
+    {icon:'⏱️',label:'Best WH On-Time',value:bestOTWH?pct(bestOTWH[1].ontime,bestOTWH[1].total)+'%':'—',sub:bestOTWH?.[0]||'',color:'linear-gradient(90deg,#10b981,#06b6d4)',bg:'rgba(16,185,129,0.08)'},
+  ]);
+
+  const wL=whArr.map(([k])=>k);
+  mkC('ch-warehouseBar','bar',{labels:wL,datasets:[{label:'Orders',data:whArr.map(([,v])=>v.total),backgroundColor:PAL,borderRadius:5}]},cDef({plugins:{legend:{display:false}}}));
+  const sk=Object.keys(byShip);
+  mkC('ch-warehouseShipping','doughnut',{labels:sk,datasets:[{data:sk.map(k=>byShip[k].total),backgroundColor:PAL,borderWidth:2,borderColor:isDark?'#131729':'#fff',hoverOffset:8}]},cNoAx());
+  mkC('ch-warehouseFulfill','bar',{labels:wL,datasets:[{label:'Fulfill %',data:whArr.map(([,v])=>pct(v.fulfilled,v.total)),backgroundColor:'rgba(0,255,136,0.7)',borderRadius:5}]},cDef({plugins:{legend:{display:false}}}));
+  mkC('ch-warehouseOnTime','bar',{labels:wL,datasets:[{label:'On-Time %',data:whArr.map(([,v])=>pct(v.ontime,v.total)),backgroundColor:'rgba(0,212,255,0.7)',borderRadius:5}]},cDef({indexAxis:'y',plugins:{legend:{display:false}}}));
+  mkC('ch-warehousePolar','polarArea',{labels:wL,datasets:[{data:whArr.map(([,v])=>pct(v.returned,v.total)),backgroundColor:PAL.map(c=>c+'99'),borderColor:PAL,borderWidth:1}]},
+    cNoAx({scales:{r:{grid:{color:'#1e2440'},ticks:{color:'#8892b0',backdropColor:'transparent'}}}}));
+
+  // Warehouse matrix
+  const hc=heatColor;
+  const matRows=whArr.map(([name,v])=>{
+    const ot=pct(v.ontime,v.total),fu=pct(v.fulfilled,v.total),re=pct(v.returned,v.total);
+    return[name,v.total.toLocaleString(),v.count,
+      `<span class="matrix-cell" style="background:${hc(ot).bg};color:${hc(ot).color}">${ot}%</span>`,
+      `<span class="matrix-cell" style="background:${hc(fu).bg};color:${hc(fu).color}">${fu}%</span>`,
+      `<span class="matrix-cell" style="background:${re<=5?hc(80).bg:hc(40).bg};color:${re<=5?hc(80).color:hc(40).color}">${re}%</span>`
+    ];
+  });
+  renderTable('matrix-warehouse',['Warehouse','Total Orders','Records','On-Time %','Fulfillment %','Return %'],matRows);
+}
+
+// ═══════════════════════════════════════════════════════
+//  PAGE 4 — CATEGORY
+// ═══════════════════════════════════════════════════════
+function renderCategory(){
+  const d=filteredData;
+  const byCat=aggBy(d,'Product Category');
+  const catArr=Object.entries(byCat).sort((a,b)=>b[1].total-a[1].total);
+  const cats=catArr.map(([k])=>k);
+  const hiFull=catArr.slice().sort((a,b)=>pct(b[1].fulfilled,b[1].total)-pct(a[1].fulfilled,a[1].total))[0];
+  const lowRet=catArr.slice().sort((a,b)=>pct(a[1].returned,a[1].total)-pct(b[1].returned,b[1].total))[0];
+  const totAll=d.reduce((s,r)=>s+r['Total Orders'],0),corAll=d.reduce((s,r)=>s+r['Correct Orders'],0);
+
+  renderKPI('kpi-category',[
+    {icon:'🥇',label:'Top Category',value:catArr[0]?.[0]||'—',sub:'Highest order volume',color:'linear-gradient(90deg,#ffd60a,#ff6b35)',bg:'rgba(255,214,10,0.08)'},
+    {icon:'📦',label:'Categories',value:cats.length,sub:'Distinct product types',color:'linear-gradient(90deg,#00d4ff,#7c3aed)',bg:'rgba(0,212,255,0.08)'},
+    {icon:'✅',label:'Best Fulfillment',value:hiFull?pct(hiFull[1].fulfilled,hiFull[1].total)+'%':'—',sub:hiFull?.[0]||'',color:'linear-gradient(90deg,#00ff88,#06b6d4)',bg:'rgba(0,255,136,0.08)',badge:'Best',bt:'up'},
+    {icon:'↩️',label:'Lowest Returns',value:lowRet?pct(lowRet[1].returned,lowRet[1].total)+'%':'—',sub:lowRet?.[0]||'',color:'linear-gradient(90deg,#10b981,#06b6d4)',bg:'rgba(16,185,129,0.08)',badge:'Least returned',bt:'up'},
+    {icon:'📈',label:'Top Cat Vol.',value:catArr[0]?catArr[0][1].total.toLocaleString():'—',sub:`Orders — ${catArr[0]?.[0]||''}`,color:'linear-gradient(90deg,#8b5cf6,#00d4ff)',bg:'rgba(139,92,246,0.08)'},
+    {icon:'🎯',label:'Correct Rate',value:pct(corAll,totAll)+'%',sub:'Correct orders overall',color:'linear-gradient(90deg,#ff6b35,#ffd60a)',bg:'rgba(255,107,53,0.08)'},
+  ]);
+
+  const byM=aggBy(d,'Month');const mL=MONTHS.filter(m=>byM[m]);
+  const catByMonth={};
+  cats.forEach(cat=>{
+    catByMonth[cat]={};
+    d.filter(r=>r['Product Category']==cat).forEach(r=>{catByMonth[cat][r['Month']]=(catByMonth[cat][r['Month']]||0)+r['Total Orders'];});
+  });
+  mkC('ch-catTrend','line',{labels:mL,datasets:cats.map((cat,i)=>({label:cat,data:mL.map(m=>catByMonth[cat][m]||0),borderColor:PAL[i],backgroundColor:'transparent',tension:0.4,pointRadius:3}))},
+    cDef({plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:9,padding:10,color:'#8892b0'}}}}));
+
+  mkC('ch-catDonut','doughnut',{labels:cats,datasets:[{data:cats.map(c=>byCat[c].total),backgroundColor:PAL,borderWidth:2,borderColor:isDark?'#131729':'#fff',hoverOffset:8}]},cNoAx());
+  mkC('ch-catFulfill','bar',{labels:cats,datasets:[{label:'Fulfill %',data:cats.map(c=>pct(byCat[c]?.fulfilled||0,byCat[c]?.total||1)),backgroundColor:PAL2,borderRadius:5}]},cDef({plugins:{legend:{display:false}}}));
+  mkC('ch-catReturn','bar',{labels:cats,datasets:[{label:'Return %',data:cats.map(c=>pct(byCat[c]?.returned||0,byCat[c]?.total||1)),backgroundColor:'rgba(255,61,138,0.7)',borderRadius:5}]},cDef({plugins:{legend:{display:false}}}));
+
+  const byShip=aggBy(d,'Shipping Method');const sMethods=Object.keys(byShip);
+  const cSData={};
+  sMethods.forEach(sh=>{cSData[sh]={};cats.forEach(cat=>{cSData[sh][cat]=d.filter(r=>r['Shipping Method']==sh&&r['Product Category']==cat).reduce((s,r)=>s+r['Total Orders'],0);});});
+  mkC('ch-catStacked','bar',{labels:cats,datasets:sMethods.map((sh,i)=>({label:sh,data:cats.map(cat=>cSData[sh][cat]||0),backgroundColor:PAL[i],borderRadius:3}))},
+    cDef({plugins:{legend:{display:true,position:'top',labels:{boxWidth:9,padding:12,color:'#8892b0'}}},scales:{x:{stacked:true,grid:{color:'rgba(30,36,64,0.8)'},ticks:{color:'#8892b0'}},y:{stacked:true,grid:{color:'rgba(30,36,64,0.8)'},ticks:{color:'#8892b0'}}}}));
+}
+
+// ═══════════════════════════════════════════════════════
+//  PAGE 5 — SERVICE QUALITY
+// ═══════════════════════════════════════════════════════
+function renderQuality(){
+  const d=filteredData;
+  const byM=aggBy(d,'Month');const byShip=aggBy(d,'Shipping Method');
+  const byWH=aggBy(d,'Warehouse Location');const bySup=aggBy(d,'Supplier Name');
+  const mL=MONTHS.filter(m=>byM[m]);
+  const tot=d.reduce((s,r)=>s+r['Total Orders'],0);
+  const ot=d.reduce((s,r)=>s+r['On-Time Deliveries'],0);
+  const fu=d.reduce((s,r)=>s+r['Fulfilled Orders'],0);
+  const re=d.reduce((s,r)=>s+r['Returned Orders'],0);
+  const co=d.reduce((s,r)=>s+r['Correct Orders'],0);
+  const qs=Math.round((pct(ot,tot)+pct(fu,tot)+pct(co,tot))/3);
+
+  renderKPI('kpi-quality',[
+    {icon:'⏱️',label:'On-Time Rate',value:pct(ot,tot)+'%',sub:'Deliveries on schedule',color:'linear-gradient(90deg,#00ff88,#06b6d4)',bg:'rgba(0,255,136,0.08)',badge:'Key Metric',bt:'up'},
+    {icon:'🎯',label:'Correct Rate',value:pct(co,tot)+'%',sub:'Orders without errors',color:'linear-gradient(90deg,#00d4ff,#7c3aed)',bg:'rgba(0,212,255,0.08)'},
+    {icon:'✅',label:'Fulfillment Rate',value:pct(fu,tot)+'%',sub:'Orders fully fulfilled',color:'linear-gradient(90deg,#ffd60a,#ff6b35)',bg:'rgba(255,214,10,0.08)',badge:'▲ Good',bt:'up'},
+    {icon:'↩️',label:'Return Rate',value:pct(re,tot)+'%',sub:'Orders returned',color:'linear-gradient(90deg,#ff3d8a,#ff6b35)',bg:'rgba(255,61,138,0.08)',badge:'Lower=Better',bt:'down'},
+    {icon:'📊',label:'Quality Score',value:qs+'%',sub:'Combined quality index',color:'linear-gradient(90deg,#8b5cf6,#00d4ff)',bg:'rgba(139,92,246,0.08)',badge:'Composite',bt:'neutral'},
+    {icon:'📦',label:'Total Orders',value:tot.toLocaleString(),sub:'In filtered selection',color:'linear-gradient(90deg,#06b6d4,#10b981)',bg:'rgba(6,182,212,0.08)'},
+  ]);
+
+  mkC('ch-qualityTrend','line',{labels:mL,datasets:[
+    {label:'On-Time %',data:mL.map(m=>{const a=byM[m];return a?pct(a.ontime,a.total):0;}),borderColor:'#00ff88',backgroundColor:'rgba(0,255,136,0.07)',fill:true,tension:0.4,pointRadius:3},
+    {label:'Fulfillment %',data:mL.map(m=>{const a=byM[m];return a?pct(a.fulfilled,a.total):0;}),borderColor:'#00d4ff',backgroundColor:'rgba(0,212,255,0.04)',fill:true,tension:0.4,pointRadius:3},
+    {label:'Return %',data:mL.map(m=>{const a=byM[m];return a?pct(a.returned,a.total):0;}),borderColor:'#ff3d8a',backgroundColor:'rgba(255,61,138,0.04)',fill:true,tension:0.4,pointRadius:3}
+  ]},cDef({plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:9,padding:10,color:'#8892b0'}}}}));
+
+  const top6=Object.entries(bySup).sort((a,b)=>b[1].total-a[1].total).slice(0,6);
+  mkC('ch-qualityRadar','radar',{
+    labels:['On-Time %','Fulfillment %','Correct %','No-Return %'],
+    datasets:top6.map(([name,v],i)=>({label:name,data:[pct(v.ontime,v.total),pct(v.fulfilled,v.total),pct(v.correct,v.total),100-pct(v.returned,v.total)],borderColor:PAL[i],backgroundColor:PAL[i]+'1a',pointBackgroundColor:PAL[i]}))
+  },{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:9,padding:8,color:'#8892b0'}}},scales:{r:{grid:{color:'#1e2440'},angleLines:{color:'#1e2440'},ticks:{color:'#8892b0',backdropColor:'transparent'}}}});
+
+  const sk=Object.keys(byShip);
+  mkC('ch-correctShip','bar',{labels:sk,datasets:[{label:'Correct %',data:sk.map(k=>pct(byShip[k].correct,byShip[k].total)),backgroundColor:PAL,borderRadius:5}]},cDef({plugins:{legend:{display:false}}}));
+  mkC('ch-returnTrend','line',{labels:mL,datasets:[{label:'Return %',data:mL.map(m=>{const a=byM[m];return a?pct(a.returned,a.total):0;}),borderColor:'#ff3d8a',backgroundColor:'rgba(255,61,138,0.11)',fill:true,tension:0.4,pointRadius:4,pointBackgroundColor:'#ff3d8a'}]},cDef({plugins:{legend:{display:false}}}));
+
+  const wk=Object.keys(byWH);
+  mkC('ch-qualityPolar','polarArea',{labels:wk,datasets:[{data:wk.map(k=>pct(byWH[k].ontime,byWH[k].total)),backgroundColor:PAL.map(c=>c+'99'),borderColor:PAL,borderWidth:1}]},
+    cNoAx({scales:{r:{grid:{color:'#1e2440'},ticks:{color:'#8892b0',backdropColor:'transparent'}}}}));
+
+  const top10S=Object.entries(bySup).sort((a,b)=>b[1].total-a[1].total).slice(0,10);
+  mkC('ch-supplierQuality','bar',{labels:top10S.map(([k])=>k),datasets:[
+    {label:'Total Orders',data:top10S.map(([,v])=>v.total),backgroundColor:'rgba(0,212,255,0.7)',borderRadius:3},
+    {label:'On-Time',data:top10S.map(([,v])=>v.ontime),backgroundColor:'rgba(0,255,136,0.7)',borderRadius:3},
+    {label:'Returned',data:top10S.map(([,v])=>v.returned),backgroundColor:'rgba(255,61,138,0.7)',borderRadius:3}
+  ]},cDef({plugins:{legend:{display:true,position:'top',labels:{boxWidth:9,padding:12,color:'#8892b0'}}}}));
+
+  // Quality summary table
+  const hc=heatColor;
+  const qRows=Object.entries(bySup).sort((a,b)=>b[1].total-a[1].total).map(([name,v])=>{
+    const ot2=pct(v.ontime,v.total),fu2=pct(v.fulfilled,v.total),co2=pct(v.correct,v.total),re2=pct(v.returned,v.total);
+    const qs2=Math.round((ot2+fu2+co2)/3);
+    return[name,v.total.toLocaleString(),
+      `<span class="matrix-cell" style="background:${hc(ot2).bg};color:${hc(ot2).color}">${ot2}%</span>`,
+      `<span class="matrix-cell" style="background:${hc(fu2).bg};color:${hc(fu2).color}">${fu2}%</span>`,
+      `<span class="matrix-cell" style="background:${hc(co2).bg};color:${hc(co2).color}">${co2}%</span>`,
+      `<span class="matrix-cell" style="background:${re2<=5?hc(80).bg:hc(40).bg};color:${re2<=5?hc(80).color:hc(40).color}">${re2}%</span>`,
+      `<span class="matrix-cell" style="background:${hc(qs2).bg};color:${hc(qs2).color};font-weight:700">${qs2}%</span>`
+    ];
+  });
+  renderTable('tbl-quality',['Supplier','Orders','On-Time %','Fulfillment %','Correct %','Return %','Quality Score'],qRows);
+}
+
+// ═══════════════════════════════════════════════════════
+//  TABLE RENDERER
+// ═══════════════════════════════════════════════════════
+function renderTable(id,headers,rows){
+  const t=document.getElementById(id);if(!t)return;
+  t.innerHTML=`<thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody>`;
+}
+
+// ═══════════════════════════════════════════════════════
+//  REPORT GENERATION
+// ═══════════════════════════════════════════════════════
+function generateReport(){
+  const d=filteredData;
+  if(!d.length){alert('No data to generate report.');return;}
+  const tot=d.reduce((s,r)=>s+r['Total Orders'],0);
+  const ot=d.reduce((s,r)=>s+r['On-Time Deliveries'],0);
+  const fu=d.reduce((s,r)=>s+r['Fulfilled Orders'],0);
+  const re=d.reduce((s,r)=>s+r['Returned Orders'],0);
+  const co=d.reduce((s,r)=>s+r['Correct Orders'],0);
+  const qs=Math.round((pct(ot,tot)+pct(fu,tot)+pct(co,tot))/3);
+  const bySup=aggBy(d,'Supplier Name');
+  const byC=aggBy(d,'Product Category');
+  const byW=aggBy(d,'Warehouse Location');
+  const topSupp=Object.entries(bySup).sort((a,b)=>b[1].total-a[1].total).slice(0,5);
+  const now=new Date().toLocaleString();
+
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"/>
+<title>Supply Chain Report — ${now}</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',sans-serif;background:#05070f;color:#e8ecf8;padding:40px;}
+.cover{text-align:center;padding:60px 40px;border-bottom:2px solid #1e2440;margin-bottom:40px;}
+.cover h1{font-size:32px;font-weight:800;background:linear-gradient(90deg,#00d4ff,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;}
+.cover p{color:#8892b0;font-size:14px;}
+.cover .date{font-size:12px;color:#4a5580;margin-top:12px;}
+.section{margin-bottom:36px;}
+.section h2{font-size:18px;font-weight:700;color:#00d4ff;border-left:3px solid #00d4ff;padding-left:12px;margin-bottom:16px;}
+.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+.kpi{background:#131729;border:1px solid #1e2440;border-radius:10px;padding:18px;text-align:center;}
+.kpi .val{font-size:28px;font-weight:800;color:#00d4ff;display:block;}
+.kpi .lbl{font-size:11px;color:#8892b0;margin-top:4px;text-transform:uppercase;letter-spacing:0.8px;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+th{background:#111428;padding:9px 12px;text-align:left;font-size:10px;font-weight:700;color:#8892b0;letter-spacing:0.8px;text-transform:uppercase;border-bottom:1px solid #1e2440;}
+td{padding:9px 12px;border-bottom:1px solid #1e2440;color:#8892b0;}
+tr:hover td{background:#111428;}
+.green{color:#00ff88;font-weight:600;}
+.red{color:#ff3d8a;font-weight:600;}
+.blue{color:#00d4ff;font-weight:700;}
+.footer{margin-top:40px;padding-top:20px;border-top:1px solid #1e2440;font-size:11px;color:#4a5580;text-align:center;}
+@media print{body{background:#fff;color:#111;}
+.kpi{background:#f5f7ff;border-color:#d0d6e8;}.kpi .val{color:#0077aa;}.section h2{color:#0077aa;border-color:#0077aa;}
+th{background:#eef1f8;color:#4a5580;}
+td{color:#4a5580;}.footer{color:#aaa;}}
+</style></head><body>
+<div class="cover">
+  <h1>Supply Chain Analytics Report</h1>
+  <p>Comprehensive Performance Analysis — All Filtered Records</p>
+  <div class="date">Generated: ${now} &nbsp;|&nbsp; Total Records: <strong>${d.length.toLocaleString()}</strong></div>
+</div>
+<div class="section">
+  <h2>Executive Summary — Key Metrics</h2>
+  <div class="kpi-row">
+    <div class="kpi"><span class="val">${tot.toLocaleString()}</span><div class="lbl">Total Orders</div></div>
+    <div class="kpi"><span class="val" style="color:#00ff88">${pct(ot,tot)}%</span><div class="lbl">On-Time Rate</div></div>
+    <div class="kpi"><span class="val" style="color:#ffd60a">${pct(fu,tot)}%</span><div class="lbl">Fulfillment Rate</div></div>
+    <div class="kpi"><span class="val" style="color:#ff3d8a">${pct(re,tot)}%</span><div class="lbl">Return Rate</div></div>
+    <div class="kpi"><span class="val" style="color:#7c3aed">${pct(co,tot)}%</span><div class="lbl">Correct Order Rate</div></div>
+    <div class="kpi"><span class="val" style="color:#00d4ff">${qs}%</span><div class="lbl">Overall Quality Score</div></div>
+  </div>
+</div>
+<div class="section">
+  <h2>Top 5 Supplier Performance</h2>
+  <table><thead><tr><th>#</th><th>Supplier</th><th>Total Orders</th><th>On-Time %</th><th>Fulfillment %</th><th>Return %</th><th>Quality Score</th></tr></thead><tbody>
+  ${topSupp.map(([name,v],i)=>{const o=pct(v.ontime,v.total),f=pct(v.fulfilled,v.total),r=pct(v.returned,v.total),q=Math.round((o+f+pct(v.correct,v.total))/3);
+    return`<tr><td class="blue">${i+1}</td><td>${name}</td><td class="blue">${v.total.toLocaleString()}</td><td class="${o>=75?'green':'red'}">${o}%</td><td class="${f>=75?'green':'red'}">${f}%</td><td class="${r<=5?'green':'red'}">${r}%</td><td class="${q>=75?'green':'red'}">${q}%</td></tr>`;
+  }).join('')}
+  </tbody></table>
+</div>
+<div class="section">
+  <h2>Category Breakdown</h2>
+  <table><thead><tr><th>Category</th><th>Total Orders</th><th>Fulfilled</th><th>Returned</th><th>On-Time %</th><th>Fulfillment %</th></tr></thead><tbody>
+  ${Object.entries(byC).sort((a,b)=>b[1].total-a[1].total).map(([name,v])=>{const f=pct(v.fulfilled,v.total),o=pct(v.ontime,v.total);
+    return`<tr><td>${name}</td><td class="blue">${v.total.toLocaleString()}</td><td>${v.fulfilled.toLocaleString()}</td><td class="red">${v.returned.toLocaleString()}</td><td class="${o>=75?'green':'red'}">${o}%</td><td class="${f>=75?'green':'red'}">${f}%</td></tr>`;
+  }).join('')}
+  </tbody></table>
+</div>
+<div class="section">
+  <h2>Warehouse Performance</h2>
+  <table><thead><tr><th>Warehouse</th><th>Total Orders</th><th>On-Time %</th><th>Fulfillment %</th><th>Return %</th></tr></thead><tbody>
+  ${Object.entries(byW).sort((a,b)=>b[1].total-a[1].total).map(([name,v])=>{const o=pct(v.ontime,v.total),f=pct(v.fulfilled,v.total),r=pct(v.returned,v.total);
+    return`<tr><td>${name}</td><td class="blue">${v.total.toLocaleString()}</td><td class="${o>=75?'green':'red'}">${o}%</td><td class="${f>=75?'green':'red'}">${f}%</td><td class="${r<=5?'green':'red'}">${r}%</td></tr>`;
+  }).join('')}
+  </tbody></table>
+</div>
+<div class="footer">Supply Chain Analytics Dashboard &nbsp;·&nbsp; Auto-generated report &nbsp;·&nbsp; ${now} &nbsp;·&nbsp; Confidential</div>
+</body></html>`;
+
+  const blob=new Blob([html],{type:'text/html'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=`SC_Report_${Date.now()}.html`;a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ═══════════════════════════════════════════════════════
+//  RENDER ALL
+// ═══════════════════════════════════════════════════════
+function renderAll(){
+  renderOverview();renderSupplier();renderWarehouse();renderCategory();renderQuality();
+}
+
+// ═══════════════════════════════════════════════════════
+//  PAGE NAV
+// ═══════════════════════════════════════════════════════
+function showPage(n){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
+  document.getElementById('page-'+n).classList.add('active');
+  document.querySelector(`[data-page="${n}"]`).classList.add('active');
+  document.getElementById('pageTitle').textContent=PAGES[n].title;
+  document.getElementById('pageDesc').textContent=PAGES[n].desc;
+  currentPage=n;
+  if(window.innerWidth<=900)closeSidebar();
+}
+
+// ═══════════════════════════════════════════════════════
+//  THEME
+// ═══════════════════════════════════════════════════════
+function toggleTheme(){
+  isDark=!isDark;
+  document.documentElement.setAttribute('data-theme',isDark?'dark':'light');
+  document.getElementById('themeBtn').innerHTML=isDark?'🌙 <span>Dark</span>':'☀️ <span>Light</span>';
+  const tc=isDark?'#8892b0':'#4a5580';const bc=isDark?'rgba(30,36,64,0.8)':'rgba(200,210,230,0.5)';
+  Chart.defaults.color=tc;Chart.defaults.borderColor=isDark?'#1e2440':'#cdd3e8';
+  Chart.defaults.plugins.tooltip.backgroundColor=isDark?'#0c0f1e':'#fff';
+  Chart.defaults.plugins.tooltip.borderColor=isDark?'#1e2440':'#cdd3e8';
+  Chart.defaults.plugins.tooltip.titleColor=isDark?'#e8ecf8':'#111828';
+  Chart.defaults.plugins.tooltip.bodyColor=tc;
+  renderAll();
+}
+
+// ═══════════════════════════════════════════════════════
+//  SIDEBAR / MODAL
+// ═══════════════════════════════════════════════════════
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('mob-open');document.getElementById('mobOverlay').classList.toggle('show');}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('mob-open');document.getElementById('mobOverlay').classList.remove('show');}
+function openModal(id){document.getElementById(id).classList.add('show');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+function refreshData(){document.getElementById('loadingOverlay').classList.remove('hidden');rawData=[];filteredData=[];setTimeout(loadData,300);}
+
+// ═══════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════
+initCalendar();
+loadData();
+</script>
+</body>
+</html>
