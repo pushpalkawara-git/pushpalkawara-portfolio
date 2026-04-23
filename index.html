@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Pushpal Kawara | Data Analyst – Reporting, Business Growth & Customer Insights</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Three.js import map -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js"
+            }
+        }
+    </script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="text-gray-800">
+    
+    <canvas id="bg-canvas"></canvas>
+    
+    <!-- ========== NAVIGATION ========== -->
+    <nav class="fixed top-0 w-full z-50 glass-card rounded-none px-4 md:px-8 py-3 shadow-lg" style="border-radius: 0 0 20px 20px;">
+        <div class="container mx-auto flex justify-between items-center">
+
+            <!-- Brand -->
+            <div class="text-xl md:text-2xl font-bold text-white tracking-tight flex-shrink-0">
+                <i class="fas fa-chart-line mr-2 text-blue-400"></i>PK Analytics
+            </div>
+            
+            <!-- Hamburger (mobile only) -->
+            <button id="hamburger-btn" class="text-white text-2xl focus:outline-none ml-4" aria-label="Menu">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <!-- Nav Links -->
+            <div id="mobile-menu">
+                <a href="#home">
+                    <i class="fas fa-home"></i>
+                    <span class="nav-link-text">Home</span>
+                </a>
+                <a href="#experience">
+                    <i class="fas fa-briefcase"></i>
+                    <span class="nav-link-text">Experience</span>
+                </a>
+                <a href="#skills">
+                    <i class="fas fa-code"></i>
+                    <span class="nav-link-text">Skills</span>
+                </a>
+                <a href="#projects">
+                    <i class="fas fa-folder-open"></i>
+                    <span class="nav-link-text">Projects</span>
+                </a>
+                <a href="#education">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span class="nav-link-text">Education</span>
+                </a>
+                <a href="#freelance">
+                    <i class="fas fa-laptop-code"></i>
+                    <span class="nav-link-text">Freelance</span>
+                </a>
+                <a href="#contact">
+                    <i class="fas fa-envelope"></i>
+                    <span class="nav-link-text">Contact</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+    
+    <main class="container mx-auto px-4 md:px-6 pt-28 pb-12">
+        
+        <!-- ========== HERO SECTION ========== -->
+        <section id="home" class="min-h-screen flex items-center justify-center mb-20">
+            <div class="text-center text-white max-w-4xl mx-auto">
+                <!-- Profile Picture -->
+                <div class="relative inline-block mb-8">
+                    <div class="profile-ring mx-auto float-animation">
+                        <img src="assets/MY-INFO/profile.jpg" alt="Pushpal Kawara" class="w-full h-full object-cover"
+                             onerror="this.src='https://randomuser.me/api/portraits/men/32.jpg'">
+                    </div>
+                    <div class="absolute bottom-1 right-1 bg-green-500 w-5 h-5 rounded-full border-2 border-white shadow-md"></div>
+                </div>
+
+                <!-- Name & Role -->
+                <h1 class="text-5xl md:text-7xl font-extrabold mb-4 tracking-tight">Pushpal Kawara</h1>
+                <div class="text-xl md:text-2xl mb-5 font-medium h-10 flex items-center justify-center">
+                    <span id="role-typing"></span>
+                </div>
+
+                <!-- Contact Info Row -->
+                <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm md:text-base mb-6 opacity-90">
+                    <span class="flex items-center gap-1"><i class="fas fa-map-marker-alt text-blue-300"></i> Maharashtra, India</span>
+                    <a href="tel:+917796004314" class="flex items-center gap-1 hover:text-blue-300 transition">
+                        <i class="fas fa-phone-alt text-blue-300"></i> +91 7796004314
+                    </a>
+                    <a href="mailto:pushpalkawara.contact@gmail.com" class="flex items-center gap-1 hover:text-blue-300 transition">
+                        <i class="fas fa-envelope text-blue-300"></i> pushpalkawara.contact@gmail.com
+                    </a>
+                </div>
+
+                <!-- Social Icons -->
+                <div class="flex justify-center gap-5 mb-8">
+                    <a href="https://linkedin.com/in/pushpal-kawara" target="_blank" class="text-white hover:text-blue-300 transition text-2xl" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                    <a href="mailto:pushpalkawara.contact@gmail.com" class="text-white hover:text-blue-300 transition text-2xl" title="Email"><i class="fas fa-envelope"></i></a>
+                    <a href="https://github.com/pushpalkawara" target="_blank" class="text-white hover:text-blue-300 transition text-2xl" title="GitHub"><i class="fab fa-github"></i></a>
+                    <a href="tel:+917796004314" class="text-white hover:text-blue-300 transition text-2xl" title="Call"><i class="fas fa-phone-alt"></i></a>
+                    <a href="https://wa.me/917796004314?text=Hello%20Pushpal,%20I%20viewed%20your%20portfolio" target="_blank" class="text-white hover:text-blue-300 transition text-2xl" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                </div>
+
+                <!-- Bio -->
+                <p class="text-base md:text-lg max-w-3xl mx-auto mb-10 opacity-90 leading-relaxed text-left md:text-center px-2">
+                    I turn customer behavior into business growth. At a platform with <strong class="text-white">50k+ daily active users</strong>, I mapped where people dropped off, why they stayed, and what made them convert — insights that shaped product and marketing decisions, not hunches.<br><br>
+                    I also automated a manual reporting process that ate up <strong class="text-white">half a workday every week</strong>, giving the team back hours to focus on strategy instead of spreadsheets.<br><br>
+                    I'm open to any role — <strong class="text-white">Data Analyst, Business Analyst, or hybrid</strong> — where data drives growth, makes the future more profitable, and moves the company forward with clear, measurable progress. Longer term, I'm deepening my understanding of <strong class="text-white">Digital Marketing</strong> because the best analysts understand the customer journey behind the numbers.
+                </p>
+
+                <!-- CTA Buttons -->
+                <div class="flex flex-wrap gap-4 justify-center">
+                    <button onclick="downloadResume()" class="bg-white text-indigo-700 px-8 py-3 rounded-full font-semibold hover:shadow-2xl transition btn-pulse shadow-lg">
+                        <i class="fas fa-download mr-2"></i>Download Resume
+                    </button>
+                    <button onclick="scrollToContact()" class="border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-indigo-700 transition">
+                        <i class="fas fa-comment-dots mr-2"></i>Contact Recruiters
+                    </button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- ========== EXPERIENCE SECTION ========== -->
+        <section id="experience" class="mb-20 section-fade">
+            <h2 class="text-4xl font-bold text-white text-center mb-10">Experience & Impact</h2>
+            <div class="max-w-5xl mx-auto">
+                <div class="glass-card p-7 md:p-8">
+                    <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-6">
+                        <div>
+                            <div class="flex items-start gap-3 mb-2">
+                                <i class="fas fa-briefcase text-3xl text-blue-400 mt-1 flex-shrink-0"></i>
+                                <h3 class="text-xl md:text-2xl font-bold text-white leading-snug">Data Analyst — Reporting, Product & Growth Analytics</h3>
+                            </div>
+                            <p class="text-blue-200 text-base font-semibold ml-10">Mind Your Logic Studio Pvt. Ltd.</p>
+                            <p class="text-white/60 text-sm ml-10">Nagpur, Maharashtra, India</p>
+                        </div>
+                        <div class="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full w-fit flex-shrink-0">
+                            <i class="fas fa-calendar-alt text-blue-300"></i>
+                            <span class="text-white/90 font-medium text-sm">Aug 2024 – Sept 2025</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="text-white font-semibold text-base mb-4 flex items-center gap-2">
+                            <i class="fas fa-tasks text-blue-300"></i> Key Contributions
+                        </h4>
+                        <ul class="text-white/90 space-y-4 custom-list">
+                            <li>
+                                <i class="fas fa-chart-line text-blue-300 flex-shrink-0 mt-1"></i>
+                                <span>Analyzed behavioral data from <strong class="text-white">50k+ daily active users</strong> across mobile and web platforms using <strong class="text-white">SQL Server</strong> and <strong class="text-white">Python</strong>. Mapped where users dropped off, what kept them engaged, and what finally made them convert — insights that directly shaped product updates and feature prioritization.</span>
+                            </li>
+                            <li>
+                                <i class="fas fa-robot text-blue-300 flex-shrink-0 mt-1"></i>
+                                <span>Automated a manual reporting process that previously consumed <strong class="text-white">half a workday each week</strong>. Built a workflow with <strong class="text-white">Python, Power BI, and Advanced Excel</strong> that pulls fresh data directly from <strong class="text-white">SQL Server</strong> and <strong class="text-white">Google Analytics</strong>. The team regained those hours to focus on actual analysis instead of spreadsheet maintenance.</span>
+                            </li>
+                            <li>
+                                <i class="fas fa-filter text-blue-300 flex-shrink-0 mt-1"></i>
+                                <span>Ran cohort and funnel analyses to pinpoint exactly where users were leaving. Wrote <strong class="text-white">SQL window functions</strong> to track behavior over time and shared the patterns with product managers. Targeted improvements followed, and retention rates moved up.</span>
+                            </li>
+                            <li>
+                                <i class="fas fa-ad text-blue-300 flex-shrink-0 mt-1"></i>
+                                <span>Evaluated <strong class="text-white">Google and Meta Ads</strong> performance beyond surface-level clicks — focusing on CPA, conversion rates, and ROI. Developed <strong class="text-white">Power BI dashboards</strong> that clearly separated profitable campaigns from underperformers, helping marketing allocate spend more effectively.</span>
+                            </li>
+                            <li>
+                                <i class="fas fa-database text-blue-300 flex-shrink-0 mt-1"></i>
+                                <span>Consolidated fragmented data from <strong class="text-white">Google Analytics, SQL Server databases, and spreadsheets</strong> into unified, validated dashboards. Removed the recurring "whose numbers are right?" friction and gave leadership a single, trusted view of performance. Keeping an eye on <strong class="text-white">AI and predictive tools</strong> to move reporting from hindsight to foresight.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-white/20">
+                        <div class="flex flex-wrap gap-2 items-center">
+                            <span class="text-white/60 text-xs mr-1"><i class="fas fa-microchip"></i> Tech Stack:</span>
+                            <span class="bg-white/10 text-white/80 text-xs px-3 py-1 rounded-full">Power BI (DAX)</span>
+                            <span class="bg-white/10 text-white/80 text-xs px-3 py-1 rounded-full">SQL Server</span>
+                            <span class="bg-white/10 text-white/80 text-xs px-3 py-1 rounded-full">Python</span>
+                            <span class="bg-white/10 text-white/80 text-xs px-3 py-1 rounded-full">Advanced Excel</span>
+                            <span class="bg-white/10 text-white/80 text-xs px-3 py-1 rounded-full">Google Analytics</span>
+                            <span class="bg-white/10 text-white/80 text-xs px-3 py-1 rounded-full">Meta Ads</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- ========== SKILLS SECTION ========== -->
+        <section id="skills" class="mb-20 section-fade">
+            <h2 class="text-4xl font-bold text-white text-center mb-10">Skills</h2>
+            <div class="max-w-5xl mx-auto space-y-5">
+                <div class="glass-card p-6">
+                    <h3 class="text-lg font-bold text-white mb-3 flex items-center gap-2"><i class="fas fa-chart-pie text-blue-300"></i>Reporting & Visualization</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="skill-tag">Power BI (DAX, Power Query)</span>
+                        <span class="skill-tag">Tableau</span>
+                        <span class="skill-tag">Qlik</span>
+                        <span class="skill-tag">Advanced Excel</span>
+                        <span class="skill-tag">Google Sheets</span>
+                        <span class="skill-tag">Chart.js</span>
+                    </div>
+                </div>
+                <div class="glass-card p-6">
+                    <h3 class="text-lg font-bold text-white mb-3 flex items-center gap-2"><i class="fas fa-database text-blue-300"></i>Databases & Querying</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="skill-tag">SQL Server</span>
+                        <span class="skill-tag">PostgreSQL</span>
+                        <span class="skill-tag">SQL (Joins, CTEs, Window Functions)</span>
+                    </div>
+                </div>
+                <div class="glass-card p-6">
+                    <h3 class="text-lg font-bold text-white mb-3 flex items-center gap-2"><i class="fab fa-python text-blue-300"></i>Programming & Automation</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="skill-tag">Python (Pandas, NumPy)</span>
+                        <span class="skill-tag">Workflow Automation</span>
+                        <span class="skill-tag">Data Cleaning Scripts</span>
+                    </div>
+                </div>
+                <div class="glass-card p-6">
+                    <h3 class="text-lg font-bold text-white mb-3 flex items-center gap-2"><i class="fas fa-bullseye text-blue-300"></i>Marketing & Product Analytics</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="skill-tag">Google Analytics</span>
+                        <span class="skill-tag">Meta Ads (CPA, ROI)</span>
+                        <span class="skill-tag">Conversion Tracking</span>
+                        <span class="skill-tag">Funnel Analysis</span>
+                        <span class="skill-tag">Cohort Analysis</span>
+                        <span class="skill-tag">Retention Metrics</span>
+                    </div>
+                </div>
+                <div class="glass-card p-6">
+                    <h3 class="text-lg font-bold text-white mb-3 flex items-center gap-2"><i class="fas fa-briefcase text-blue-300"></i>Business & Operations Knowledge</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="skill-tag">KPI Development</span>
+                        <span class="skill-tag">Data Storytelling</span>
+                        <span class="skill-tag">Supply Chain Metrics</span>
+                        <span class="skill-tag">Retail Analytics</span>
+                        <span class="skill-tag">Ad Performance Reporting</span>
+                        <span class="skill-tag">MoM Growth</span>
+                    </div>
+                </div>
+                <div class="glass-card p-6">
+                    <h3 class="text-lg font-bold text-white mb-3 flex items-center gap-2"><i class="fas fa-flask text-blue-300"></i>Currently Exploring</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="skill-tag">AI Fundamentals</span>
+                        <span class="skill-tag">Predictive Analytics</span>
+                        <span class="skill-tag">Machine Learning for Business Forecasting</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- ========== PROJECTS SECTION ========== -->
+        <section id="projects" class="mb-20 section-fade">
+            <h2 class="text-4xl font-bold text-white text-center mb-12">Featured Projects</h2>
+            <div class="projects-grid grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+
+                <!-- Project 1: Ather EV Dashboard -->
+                <div class="project-card p-5" onclick="openProjectModal(1)">
+                    <div class="relative mb-4 overflow-hidden rounded-xl h-48">
+                        <img src="assets/Ather_EV_POWER-BI/ather-dashboard-preview.jpg" alt="Ather EV Dashboard"
+                             class="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+                             onerror="this.src='https://images.unsplash.com/photo-1610792513898-7b6c6f7e6d3c?w=400&h=300&fit=crop'">
+                        <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition">
+                            <i class="fas fa-search-plus text-white text-3xl"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2 text-gray-800">Ather EV Sales & Operations Dashboard</h3>
+                    <p class="text-gray-600 text-sm mb-3">Power BI solution simulating 52K+ customers and 60+ showrooms. Uncovered 40% festive spike, 65% EMI dependency, and 22% Tier-2 growth.</p>
+                    <div class="flex flex-wrap gap-2 mb-3">
+                        <span class="bg-indigo-100 text-indigo-700 text-xs px-2 py-1 rounded-full">Power BI</span>
+                        <span class="bg-indigo-100 text-indigo-700 text-xs px-2 py-1 rounded-full">DAX</span>
+                        <span class="bg-indigo-100 text-indigo-700 text-xs px-2 py-1 rounded-full">Python</span>
+                        <span class="bg-indigo-100 text-indigo-700 text-xs px-2 py-1 rounded-full">SQL Server</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm text-gray-500">
+                        <span><i class="fas fa-users mr-1"></i> 52K+ customers</span>
+                        <span><i class="fas fa-store mr-1"></i> 60+ showrooms</span>
+                    </div>
+                </div>
+
+                <!-- Project 2: Supply Chain Dashboard -->
+                <div class="project-card p-5" onclick="openProjectModal(2)">
+                    <div class="relative mb-4 overflow-hidden rounded-xl h-48">
+                        <img src="assets/SupplyChainHTMLBI/supply-chain-preview.jpg" alt="Supply Chain Dashboard"
+                             class="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+                             onerror="this.src='https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?w=400&h=300&fit=crop'">
+                        <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition">
+                            <i class="fas fa-search-plus text-white text-3xl"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2 text-gray-800">Supply Chain Performance Dashboard</h3>
+                    <p class="text-gray-600 text-sm mb-3">Live JavaScript dashboard connected to Google Sheets. Cut reporting time from half a day to zero, flagged 12% return rate supplier.</p>
+                    <div class="flex flex-wrap gap-2 mb-3">
+                        <span class="bg-indigo-100 text-indigo-700 text-xs px-2 py-1 rounded-full">JavaScript</span>
+                        <span class="bg-indigo-100 text-indigo-700 text-xs px-2 py-1 rounded-full">Chart.js</span>
+                        <span class="bg-indigo-100 text-indigo-700 text-xs px-2 py-1 rounded-full">Google Sheets API</span>
+                        <span class="bg-indigo-100 text-indigo-700 text-xs px-2 py-1 rounded-full">SQL Server</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm text-gray-500">
+                        <span><i class="fas fa-chart-line mr-1"></i> 500+ monthly orders</span>
+                        <span><i class="fas fa-database mr-1"></i> Live data</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- ========== EDUCATION & CERTIFICATIONS ========== -->
+        <section id="education" class="mb-20 section-fade">
+            <h2 class="text-4xl font-bold text-white text-center mb-10">Education & Certifications</h2>
+            <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                <div class="glass-card p-7">
+                    <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fas fa-graduation-cap text-blue-300"></i> Education
+                    </h3>
+                    <div class="text-white/90 space-y-2">
+                        <p class="font-semibold text-base">Bachelor of Technology (Computer Science Engineering)</p>
+                        <p class="text-sm text-white/75">Rashtrasant Tukadoji Maharaj Nagpur University</p>
+                        <p class="text-sm text-white/75">2024 &nbsp;|&nbsp; CGPA: 7.38 / 10</p>
+                        <p class="text-sm text-white/75 mt-2">Class XII — 62% &nbsp;|&nbsp; Class X — 83%</p>
+                    </div>
+                </div>
+                <div class="glass-card p-7">
+                    <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fas fa-certificate text-blue-300"></i> Certifications
+                    </h3>
+                    <ul class="text-white/90 space-y-2 text-sm">
+                        <li class="flex items-center gap-2"><i class="fas fa-check-circle text-blue-300 flex-shrink-0"></i> SQL (Advanced) – HackerRank</li>
+                        <li class="flex items-center gap-2"><i class="fas fa-check-circle text-blue-300 flex-shrink-0"></i> Python for Data Analysis – Reliance Foundation</li>
+                        <li class="flex items-center gap-2"><i class="fas fa-check-circle text-blue-300 flex-shrink-0"></i> Power BI Data Modeling & Visualization</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="max-w-5xl mx-auto mt-6">
+                <div class="glass-card p-7">
+                    <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fas fa-info-circle text-blue-300"></i> Additional Information
+                    </h3>
+                    <div class="text-white/90 space-y-2 text-sm">
+                        <p class="flex items-center gap-2"><i class="fas fa-language text-blue-300"></i> Languages: English (Professional), Hindi (Fluent), Marathi (Fluent)</p>
+                        <p class="flex items-center gap-2"><i class="fas fa-medal text-blue-300"></i> NCC 'C' Certificate – Government of India</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- ========== TESTIMONIALS ========== -->
+        <section id="testimonials" class="mb-20 section-fade">
+            <h2 class="text-4xl font-bold text-white text-center mb-10">What Clients & Colleagues Say</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                <div class="glass-card p-6 text-white">
+                    <i class="fas fa-quote-left text-3xl mb-4 opacity-50 text-blue-300"></i>
+                    <p class="mb-5 text-sm leading-relaxed text-white/90">"Pushpal's product analytics dashboards gave us clear visibility into user retention and ad ROI. His funnel analysis directly improved our campaign performance."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-user-tie text-sm"></i>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-sm">Amit Sharma</p>
+                            <p class="text-xs text-white/60">Product Lead, E-commerce</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card p-6 text-white">
+                    <i class="fas fa-quote-left text-3xl mb-4 opacity-50 text-purple-300"></i>
+                    <p class="mb-5 text-sm leading-relaxed text-white/90">"The cohort analysis and retention tracking he built helped us reduce churn by 18%. Extremely skilled in Power BI and SQL."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-chart-line text-sm"></i>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-sm">Neha Gupta</p>
+                            <p class="text-xs text-white/60">Senior Manager, Analytics</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card p-6 text-white">
+                    <i class="fas fa-quote-left text-3xl mb-4 opacity-50 text-green-300"></i>
+                    <p class="mb-5 text-sm leading-relaxed text-white/90">"Pushpal's ability to translate business questions into automated dashboards saved us hours of manual work. Highly recommended for any data role."</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-database text-sm"></i>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-sm">Rahul Mehta</p>
+                            <p class="text-xs text-white/60">Data Lead, Distributor Manager</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- ========== FREELANCE SECTION ========== -->
+        <section id="freelance" class="mb-20 section-fade">
+            <h2 class="text-4xl font-bold text-white text-center mb-10">Freelance Services</h2>
+            <div class="glass-card p-8 max-w-4xl mx-auto text-center text-white">
+                <i class="fas fa-laptop-code text-5xl mb-4 text-blue-300"></i>
+                <h3 class="text-2xl font-bold mb-3">Available for Freelance Projects</h3>
+                <p class="text-white/80 mb-8 max-w-lg mx-auto">I help businesses turn data into actionable insights. Here's what I can build for you:</p>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                    <div class="bg-white/10 p-4 rounded-xl hover:bg-white/20 transition">
+                        <i class="fas fa-chart-pie text-2xl mb-2 text-blue-300"></i>
+                        <p class="text-sm font-medium">Dashboard Design</p>
+                    </div>
+                    <div class="bg-white/10 p-4 rounded-xl hover:bg-white/20 transition">
+                        <i class="fas fa-database text-2xl mb-2 text-blue-300"></i>
+                        <p class="text-sm font-medium">SQL Optimization</p>
+                    </div>
+                    <div class="bg-white/10 p-4 rounded-xl hover:bg-white/20 transition">
+                        <i class="fas fa-chart-line text-2xl mb-2 text-blue-300"></i>
+                        <p class="text-sm font-medium">KPI Tracking</p>
+                    </div>
+                    <div class="bg-white/10 p-4 rounded-xl hover:bg-white/20 transition">
+                        <i class="fas fa-file-excel text-2xl mb-2 text-blue-300"></i>
+                        <p class="text-sm font-medium">MIS Automation</p>
+                    </div>
+                </div>
+                <button onclick="openFreelanceModal()" class="bg-white text-indigo-700 px-8 py-3 rounded-full font-semibold hover:shadow-xl transition">
+                    <i class="fas fa-briefcase mr-2"></i>Hire Me for Freelance
+                </button>
+            </div>
+        </section>
+        
+        <!-- ========== CONTACT SECTION ========== -->
+        <section id="contact" class="mb-8 section-fade">
+            <h2 class="text-4xl font-bold text-white text-center mb-10">Connect With Me</h2>
+            <div class="glass-card p-8 max-w-2xl mx-auto text-white">
+                <div class="grid grid-cols-4 gap-5 text-center mb-8">
+                    <a href="https://linkedin.com/in/pushpal-kawara" target="_blank" class="social-icon">
+                        <i class="fab fa-linkedin text-4xl"></i><p class="text-xs mt-2">LinkedIn</p>
+                    </a>
+                    <a href="mailto:pushpalkawara.contact@gmail.com" class="social-icon">
+                        <i class="fas fa-envelope text-4xl"></i><p class="text-xs mt-2">Email</p>
+                    </a>
+                    <a href="https://wa.me/917796004314?text=Hello%20Pushpal,%20I%20viewed%20your%20portfolio" target="_blank" class="social-icon">
+                        <i class="fab fa-whatsapp text-4xl"></i><p class="text-xs mt-2">WhatsApp</p>
+                    </a>
+                    <a href="tel:+917796004314" class="social-icon">
+                        <i class="fas fa-phone text-4xl"></i><p class="text-xs mt-2">Call</p>
+                    </a>
+                </div>
+                <div class="bg-white/15 rounded-xl p-5 border border-white/20">
+                    <p class="font-bold text-base mb-2 text-center">
+                        <i class="fas fa-bullhorn mr-2 text-blue-300"></i>For Recruiters & Hiring Managers
+                    </p>
+                    <p class="text-white/85 text-sm leading-relaxed text-center">
+                        I am actively seeking opportunities as a <strong class="text-white">Data Analyst, Business Analyst, or hybrid role</strong> — where data drives growth and moves the business forward.
+                        I bring hands-on experience in product analytics, user retention, ad performance, retail analytics, and supply chain reporting.
+                        Let's connect and turn data into measurable progress.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- ========== FOOTER ========== -->
+    <footer class="text-center text-white/50 py-8 border-t border-white/10">
+        <p class="text-sm">Pushpal Kawara — Data Analyst | Reporting, Business Growth & Customer Insights</p>
+        <p class="text-xs mt-1 text-white/35">© 2026 | Proof Of Work</p>
+    </footer>
+    
+    <!-- ========== PROJECT MODAL ========== -->
+    <div id="projectModal" class="modal">
+        <div>
+            <div class="modal-content max-w-5xl w-full">
+                <div class="sticky top-0 bg-white z-10 px-6 py-4 border-b rounded-t-2xl flex justify-between items-center">
+                    <h2 id="modalTitle" class="text-xl font-bold text-gray-800 pr-4"></h2>
+                    <button onclick="closeProjectModal()" class="text-3xl text-gray-400 hover:text-gray-800 leading-none flex-shrink-0">&times;</button>
+                </div>
+                <div id="modalContent" class="p-6"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== FREELANCE MODAL ========== -->
+    <div id="freelanceModal" class="modal">
+        <div>
+            <div class="modal-content max-w-md w-full">
+                <div class="bg-indigo-700 text-white px-6 py-4 rounded-t-2xl flex justify-between items-center">
+                    <h3 class="text-lg font-bold">Freelance Project Inquiry</h3>
+                    <button onclick="closeFreelanceModal()" class="text-2xl leading-none opacity-80 hover:opacity-100">&times;</button>
+                </div>
+                <div class="p-6">
+                    <form id="freelanceForm" onsubmit="submitFreelance(event)">
+                        <input type="text" placeholder="Your Name" class="w-full p-3 mb-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300" required>
+                        <input type="email" placeholder="Your Email" class="w-full p-3 mb-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300" required>
+                        <input type="text" placeholder="Company / Business" class="w-full p-3 mb-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300">
+                        <textarea placeholder="Tell me about your data analytics needs..." rows="4" class="w-full p-3 mb-4 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 resize-none" required></textarea>
+                        <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition text-sm">
+                            Send Inquiry
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script type="module" src="three-bg.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
