@@ -1,5 +1,5 @@
 // ========== TYPING ANIMATION ==========
-const roles = ["Data Analyst", "Business Analyst", "Product Analyst", "MIS Analyst", "Growth Analyst", "Reporting Analyst"];
+const roles = ["Data Analyst", "Business Analyst", "MIS Executive", "BI Developer", "Product Analyst", "Reporting Analyst"];
 let roleIndex = 0, charIndex = 0, isDeleting = false;
 const typingElement = document.getElementById("role-typing");
 
@@ -32,7 +32,7 @@ function scrollToContact() {
     document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
 }
 function downloadResume() {
-    window.location.href = 'assets/MY-INFO/PK_Resume_23April.pdf';
+    window.location.href = 'assets/MY-INFO/PushpalKResume30APR.pdf';
 }
 
 // ========== SECTION FADE ON SCROLL ==========
@@ -51,7 +51,6 @@ const mobileMenu = document.getElementById('mobile-menu');
 if (hamburgerBtn && mobileMenu) {
     hamburgerBtn.addEventListener('click', function () {
         const isOpen = mobileMenu.classList.toggle('open');
-        // Toggle icon between bars and X
         hamburgerBtn.innerHTML = isOpen
             ? '<i class="fas fa-times"></i>'
             : '<i class="fas fa-bars"></i>';
@@ -209,6 +208,77 @@ function openProjectModal(projectId) {
                         <a href="supply-chain-dashboard.html" target="_blank"
                            class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-700 transition inline-flex items-center gap-1">
                             <i class="fas fa-external-link-alt"></i> Open Live Dashboard
+                        </a>
+                    </div>
+                </div>
+            `
+        },
+        3: {
+            title: "Spirits Distribution Intelligence – MIS & BI Capstone",
+            content: `
+                <div>
+                    <div class="iframe-container mb-6">
+                        <iframe title="SpiritsDistribution" width="600" height="373.5" 
+                            src="https://app.powerbi.com/view?r=eyJrIjoiYWE3NmFjNmQtYWM5MS00MWEzLWJmYjYtNDZlMGQ5MzYxOThmIiwidCI6ImQwOGNmOGE5LTQ1ZWEtNDFlYS1iMGM4LTgxYzVlN2FmYWYxYyJ9" 
+                            frameborder="0" allowFullScreen="true">
+                        </iframe>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-5 mb-6">
+                        <div class="bg-gray-50 p-4 rounded-xl">
+                            <h4 class="font-bold text-indigo-700 mb-1">📊 The Business Problem</h4>
+                            <p class="text-sm text-gray-700">A multi‑outlet spirits distributor across Delhi/NCR relied on scattered Excel files and gut‑feel decisions. They had no real‑time view of daily revenue, outlet profitability, brand margins, or inventory risks.</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-xl">
+                            <h4 class="font-bold text-indigo-700 mb-1">💡 The Solution</h4>
+                            <p class="text-sm text-gray-700">Built a complete MIS reporting system with a SQL Server star schema and a 5‑page interactive Power BI dashboard. Daily reports that previously took hours now refresh automatically via scheduled refresh — cutting reporting time by ~90%.</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-xl md:col-span-2">
+                            <h4 class="font-bold text-indigo-700 mb-2">🔍 Key Business Insights</h4>
+                            <ul class="text-sm text-gray-700 list-disc pl-4 space-y-1">
+                                <li><strong>Retail outlets delivered 55% higher net profit</strong> than bars — shift focus to retail.</li>
+                                <li><strong>4 high‑revenue brands had near‑zero margin</strong> — flagged for delisting or price revision.</li>
+                                <li><strong>Discounts above 8% caused a 30% margin drop</strong> — recommended strict discount control.</li>
+                                <li><strong>Inventory alerts flagged 4 products at critical low stock</strong>, highlighting ₹1.2L in urgent reorder value — preventing stock‑outs.</li>
+                                <li><strong>Monday–Thursday sales 40% lower</strong> than weekends — targeted promotions now possible.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-xl md:col-span-2">
+                            <h4 class="font-bold text-indigo-700 mb-2">✅ Business Recommendations</h4>
+                            <ul class="text-sm text-gray-700 list-disc pl-4 space-y-1">
+                                <li>Shift promotions and sales visits to retail outlets.</li>
+                                <li>Review pricing or discontinue the 4 loss‑making brands.</li>
+                                <li>Implement a discount cap at 8% to protect margins.</li>
+                                <li>Place immediate purchase orders for the critical low‑stock products.</li>
+                                <li>Use weekday promotions to balance the weekend spike.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="bg-indigo-50 p-4 rounded-xl mb-5">
+                        <h4 class="font-bold text-gray-800 mb-2">🧠 Project Details & Documentation</h4>
+                        <p class="text-sm text-gray-600 mb-3">Synthetic data generated with Python, simulating 4 months of transactions across 8 outlets and 12 brands. The dashboard includes 25+ DAX measures, automated stock alerts, and a star schema data model. A full project presentation is available for download.</p>
+                        <div class="flex flex-wrap gap-3">
+                            <a href="assets/Spirit_Distribution/Spirit_Distribution_Presentation.pdf" target="_blank"
+                               class="bg-white text-indigo-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition inline-flex items-center gap-1 border border-gray-200">
+                                <i class="fas fa-file-pdf"></i> View Presentation (PDF)
+                            </a>
+                            <a href="https://app.powerbi.com/view?r=eyJrIjoiYWE3NmFjNmQtYWM5MS00MWEzLWJmYjYtNDZlMGQ5MzYxOThmIiwidCI6ImQwOGNmOGE5LTQ1ZWEtNDFlYS1iMGM4LTgxYzVlN2FmYWYxYyJ9" target="_blank"
+                               class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-700 transition inline-flex items-center gap-1">
+                                <i class="fas fa-external-link-alt"></i> Open Live Dashboard
+                            </a>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap justify-between items-center gap-3">
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-gray-200 text-gray-800 text-xs px-3 py-1 rounded-full">Power BI (DAX, Power Query)</span>
+                            <span class="bg-gray-200 text-gray-800 text-xs px-3 py-1 rounded-full">SQL Server</span>
+                            <span class="bg-gray-200 text-gray-800 text-xs px-3 py-1 rounded-full">Star Schema</span>
+                            <span class="bg-gray-200 text-gray-800 text-xs px-3 py-1 rounded-full">Python</span>
+                            <span class="bg-gray-200 text-gray-800 text-xs px-3 py-1 rounded-full">Advanced Excel</span>
+                            <span class="bg-gray-200 text-gray-800 text-xs px-3 py-1 rounded-full">Google Sheets</span>
+                        </div>
+                        <a href="assets/Spirit_Distribution/Spirit_Distribution_Presentation.pdf" download
+                           class="bg-gray-100 text-indigo-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition inline-flex items-center gap-1">
+                            <i class="fas fa-download"></i> Download PDF
                         </a>
                     </div>
                 </div>
